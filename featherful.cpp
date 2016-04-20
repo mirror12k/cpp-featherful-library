@@ -104,7 +104,6 @@ bytestring bytestring::concat(const bytestring& other) const
     buffers[0] = this->buffer();
     buffers[1] = other.buffer();
 
-//    bytestring result(2, lengths, buffers);
     return bytestring(2, lengths, buffers);
 }
 
@@ -141,6 +140,43 @@ bytestring bytestring::substring(int start, int end) const
 
     return bytestring(end - start, this->a_buffer + start);
 }
+
+
+bytestring bytestring::strip(char c) const
+{
+    uint length = this->i_length;
+    const char* buffer = this->a_buffer;
+
+    uint stripped_offset = 0;
+    char* stripped_buffer = (char*)malloc(length);
+
+    for (uint i = 0; i < length; i++)
+        if (buffer[i] != c)
+            stripped_buffer[stripped_offset++] = buffer[i];
+
+    bytestring result(stripped_offset, stripped_buffer);
+    free(stripped_buffer);
+    return result;
+}
+
+bytestring bytestring::strip(const bytestring& chars) const
+{
+    bytestring result = *this;
+
+    const char* buffer = chars.buffer();
+    for (uint i = 0; i < chars.length(); i++)
+        result = result.strip(buffer[i]);
+
+    return result;
+}
+
+bytestring bytestring::strip_whitespace() const
+{
+    return this->strip(bytestring(" \t\r\n"));
+}
+
+
+
 
 bool bytestring::contains(char c, uint offset) const
 {

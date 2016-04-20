@@ -29,6 +29,10 @@ public:
 
     bytestring concat(const bytestring& other) const;
     bytestring substring(int start, int end=-1) const;
+    bytestring strip(char c) const;
+    bytestring strip(const bytestring& chars) const;
+    bytestring strip_whitespace() const;
+
     bool contains(char c, uint offset=0) const;
     bool contains(const bytestring& needle, uint offset=0) const;
     int find(char c, uint offset=0) const;
