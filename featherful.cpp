@@ -5,6 +5,10 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include <exception>
+
+using std::exception;
+
 
 namespace featherful
 {
@@ -60,28 +64,12 @@ bytestring& bytestring::operator=(const bytestring& other)
     return *this;
 }
 
-
 bytestring::~bytestring()
 {
 //    printf("debug dtor\n");
     free((void*)this->a_buffer);
 }
 
-
-bytestring bytestring::concat(const bytestring& other) const
-{
-    uint lengths[2];
-    const char* buffers[2];
-
-    lengths[0] = this->length();
-    lengths[1] = other.length();
-
-    buffers[0] = this->buffer();
-    buffers[1] = other.buffer();
-
-    bytestring result(2, lengths, buffers);
-    return result;
-}
 
 
 uint bytestring::length() const
@@ -98,7 +86,71 @@ char* bytestring::c_str() const
 {
     char* str = (char*)malloc(this->i_length + 1);
     memcpy(str, this->a_buffer, this->i_length);
+    str[this->i_length] = '\0';
+    return str;
 }
 
+
+
+
+bytestring bytestring::concat(const bytestring& other) const
+{
+    uint lengths[2];
+    const char* buffers[2];
+
+    lengths[0] = this->length();
+    lengths[1] = other.length();
+
+    buffers[0] = this->buffer();
+    buffers[1] = other.buffer();
+
+//    bytestring result(2, lengths, buffers);
+    return bytestring(2, lengths, buffers);
 }
+
+bytestring bytestring::substring(int start, int end) const
+{
+    if (start < 0)
+    {
+        start = this->i_length + start;
+        if (start < 0)
+            throw exception();
+    }
+    else if (start >= this->i_length)
+    {
+        throw exception();
+    }
+
+    if (end < 0)
+    {
+        end = this->i_length + end;
+        if (end < 0)
+            throw exception();
+    }
+    else if (end >= this->i_length)
+    {
+        throw exception();
+    }
+
+    end++;
+
+    if (start > end)
+    {
+        throw exception();
+    }
+
+    printf("debug: %d - %d\n", start, end);
+
+    return bytestring(end - start, this->a_buffer + start);
+}
+
+//bool contains(char c, uint offset=0) const;
+//bool contains(const bytestring& needle, uint offset=0) const;
+//int find(char c, uint offset=0) const;
+//int find(const bytestring& needle, uint offset=0) const;
+
+}
+
+
+
 

@@ -17,16 +17,23 @@ public:
     bytestring(uint string_count, uint* length, const char** s);
 
     bytestring(const bytestring& other);
-
     bytestring& operator=(const bytestring& other);
 
     ~bytestring();
 
-    bytestring concat(const bytestring& other) const;
 
     uint length() const;
     const char* buffer() const;
     char* c_str() const;
+
+
+    bytestring concat(const bytestring& other) const;
+    bytestring substring(int start, int end=-1) const;
+    bool contains(char c, uint offset=0) const;
+    bool contains(const bytestring& needle, uint offset=0) const;
+    int find(char c, uint offset=0) const;
+    int find(const bytestring& needle, uint offset=0) const;
+
 
 private:
     int i_length;
