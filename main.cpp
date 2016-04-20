@@ -55,6 +55,7 @@ int main (int argc, char** argv)
     cout << bytestring("hello world!").strip(bytestring("word!")).c_str() << endl;
     cout << bytestring("hello world!").strip_whitespace().c_str() << endl;
 
+
 //    str = str.concat(other);
 //    cout << "my bytestring: " << str.c_str() << endl;
 

@@ -91,6 +91,16 @@ char* bytestring::c_str() const
 }
 
 
+bytestring::const_iterator bytestring::begin() const
+{
+    return this->a_buffer;
+}
+bytestring::const_iterator bytestring::end() const
+{
+    return this->a_buffer + this->i_length;
+}
+
+
 
 
 bytestring bytestring::concat(const bytestring& other) const
@@ -144,15 +154,12 @@ bytestring bytestring::substring(int start, int end) const
 
 bytestring bytestring::strip(char c) const
 {
-    uint length = this->i_length;
-    const char* buffer = this->a_buffer;
-
     uint stripped_offset = 0;
-    char* stripped_buffer = (char*)malloc(length);
+    char* stripped_buffer = (char*)malloc(this->i_length);
 
-    for (uint i = 0; i < length; i++)
-        if (buffer[i] != c)
-            stripped_buffer[stripped_offset++] = buffer[i];
+    for (bytestring::const_iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; iter++)
+        if (*iter != c)
+            stripped_buffer[stripped_offset++] = *iter;
 
     bytestring result(stripped_offset, stripped_buffer);
     free(stripped_buffer);
@@ -163,9 +170,8 @@ bytestring bytestring::strip(const bytestring& chars) const
 {
     bytestring result = *this;
 
-    const char* buffer = chars.buffer();
-    for (uint i = 0; i < chars.length(); i++)
-        result = result.strip(buffer[i]);
+    for (bytestring::const_iterator iter = chars.begin(), iter_end = chars.end(); iter != iter_end; iter++)
+        result = result.strip(*iter);
 
     return result;
 }
@@ -190,33 +196,27 @@ bool bytestring::contains(const bytestring& needle, uint offset) const
 
 int bytestring::find(char c, uint offset) const
 {
-    uint length = this->i_length;
-    const char* buffer = this->a_buffer;
-    for (uint i = offset; i < length; i++)
-        if (buffer[i] == c)
-            return i;
+    for (bytestring::const_iterator iter = this->begin() + offset, iter_end = this->end(); iter < iter_end; iter++)
+        if (*iter == c)
+            return iter - this->begin();
     return -1;
 }
 
 int bytestring::find(const bytestring& needle, uint offset) const
 {
-    uint length = this->i_length;
-    uint needle_length = needle.length();
-
-    if (needle_length > length)
+    if (needle.length() == 0)
+        throw exception();
+    if (needle.length() > this->length())
         return -1;
 
-    const char* buffer = this->a_buffer;
-    const char* needle_buffer = needle.buffer();
-
-    uint needle_offset = 0;
-    for (uint i = offset; i <= length - needle_length; i++)
+    bytestring::const_iterator check_iter, needle_iter, needle_end = needle.end();
+    for (bytestring::const_iterator iter = this->begin() + offset, iter_end = this->end() - needle.length(); iter <= iter_end; iter++)
     {
-        for (needle_offset = 0; needle_offset < needle_length; needle_offset++)
-            if (buffer[i + needle_offset] != needle_buffer[needle_offset])
+        for (check_iter = iter, needle_iter = needle.begin(); needle_iter != needle_end; check_iter++, needle_iter++)
+            if (*check_iter != *needle_iter)
                 break;
-        if (needle_offset == needle_length)
-            return i;
+        if (needle_iter == needle_end)
+            return iter - this->begin();
     }
     return -1;
 }

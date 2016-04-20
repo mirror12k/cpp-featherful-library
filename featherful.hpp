@@ -22,9 +22,16 @@ public:
     ~bytestring();
 
 
+
     uint length() const;
     const char* buffer() const;
     char* c_str() const;
+
+
+    typedef const char* const_iterator;
+
+    const_iterator begin() const;
+    const_iterator end() const;
 
 
     bytestring concat(const bytestring& other) const;
@@ -37,6 +44,7 @@ public:
     bool contains(const bytestring& needle, uint offset=0) const;
     int find(char c, uint offset=0) const;
     int find(const bytestring& needle, uint offset=0) const;
+
 
 
 private:
