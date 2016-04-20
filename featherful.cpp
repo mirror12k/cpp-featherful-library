@@ -91,6 +91,20 @@ char* bytestring::c_str() const
 }
 
 
+char bytestring::operator[](uint index) const
+{
+    return this->char_at(index);
+}
+
+bytestring bytestring::operator+(const bytestring& other) const
+{
+    return this->concat(other);
+}
+
+
+
+
+
 bytestring::const_iterator bytestring::begin() const
 {
     return this->a_buffer;
@@ -182,7 +196,15 @@ bytestring bytestring::strip_whitespace() const
 }
 
 
-
+char bytestring::char_at(uint index) const
+{
+    if (index < 0)
+        throw exception();
+    else if (index >= this->i_length)
+        throw exception();
+    else
+        return this->a_buffer[index];
+}
 
 bool bytestring::contains(char c, uint offset) const
 {
@@ -221,6 +243,11 @@ int bytestring::find(const bytestring& needle, uint offset) const
     return -1;
 }
 
+
+bool bytestring::empty() const
+{
+    return this->i_length == 0;
+}
 
 
 

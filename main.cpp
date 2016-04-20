@@ -55,6 +55,13 @@ int main (int argc, char** argv)
     cout << bytestring("hello world!").strip(bytestring("word!")).c_str() << endl;
     cout << bytestring("hello world!").strip_whitespace().c_str() << endl;
 
+    cout << "[1]: " << bytestring("hello world!")[1] << endl;
+    cout << "[1]: " << bytestring("hello world!")[11] << endl;
+    cout << (bytestring("hello") + bytestring(" ") + bytestring("world!")).c_str() << endl;
+
+    cout << "is 'asdf' empty? " << bytestring("asdf").empty() << endl;
+    cout << "is '' empty? " << bytestring("").empty() << endl;
+    cout << "is '' empty? " << bytestring().empty() << endl;
 
 //    str = str.concat(other);
 //    cout << "my bytestring: " << str.c_str() << endl;
