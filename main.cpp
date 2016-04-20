@@ -36,6 +36,20 @@ int main (int argc, char** argv)
     str = bytestring("hello world!").substring(-6, -2);
     cout << "my bytestring [" << str.length() << "]: " << str.c_str() << endl;
 
+    cout << "find char:" << endl;
+    cout << bytestring("hello world!").find('l') << endl;
+    cout << bytestring("hello world!").find('l', 3) << endl;
+    cout << bytestring("hello world!").find('l', 4) << endl;
+    cout << bytestring("hello world!").find('a') << endl;
+
+    cout << "find bytestring:" << endl;
+    cout << bytestring("hello world!").find(bytestring("hello")) << endl;
+    cout << bytestring("hello world!").find(bytestring("world")) << endl;
+    cout << bytestring("hello world!").find(bytestring("o w")) << endl;
+    cout << bytestring("hello world!").find(bytestring("o w"), 10) << endl;
+    cout << bytestring("hello world!").find(bytestring("!")) << endl;
+    cout << bytestring("hello world!").find(bytestring("! asdf")) << endl;
+
 //    str = str.concat(other);
 //    cout << "my bytestring: " << str.c_str() << endl;
 

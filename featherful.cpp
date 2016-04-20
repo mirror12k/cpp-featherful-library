@@ -139,15 +139,54 @@ bytestring bytestring::substring(int start, int end) const
         throw exception();
     }
 
-    printf("debug: %d - %d\n", start, end);
-
     return bytestring(end - start, this->a_buffer + start);
 }
 
-//bool contains(char c, uint offset=0) const;
-//bool contains(const bytestring& needle, uint offset=0) const;
-//int find(char c, uint offset=0) const;
-//int find(const bytestring& needle, uint offset=0) const;
+bool bytestring::contains(char c, uint offset) const
+{
+    return this->find(c, offset) >= 0;
+}
+
+bool bytestring::contains(const bytestring& needle, uint offset) const
+{
+    return this->find(needle, offset) >= 0;
+}
+
+int bytestring::find(char c, uint offset) const
+{
+    uint length = this->i_length;
+    const char* buffer = this->a_buffer;
+    for (uint i = offset; i < length; i++)
+        if (buffer[i] == c)
+            return i;
+    return -1;
+}
+
+int bytestring::find(const bytestring& needle, uint offset) const
+{
+    uint length = this->i_length;
+    uint needle_length = needle.length();
+
+    if (needle_length > length)
+        return -1;
+
+    const char* buffer = this->a_buffer;
+    const char* needle_buffer = needle.buffer();
+
+    uint needle_offset = 0;
+    for (uint i = offset; i <= length - needle_length; i++)
+    {
+        for (needle_offset = 0; needle_offset < needle_length; needle_offset++)
+            if (buffer[i + needle_offset] != needle_buffer[needle_offset])
+                break;
+        if (needle_offset == needle_length)
+            return i;
+    }
+    return -1;
+}
+
+
+
 
 }
 
