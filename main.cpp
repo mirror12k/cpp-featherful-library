@@ -5,10 +5,19 @@
 using std::cout;
 using std::endl;
 
+#include "featherful.hpp"
+
+using featherful::bytestring;
 
 int main (int argc, char** argv)
 {
     cout << "hello world" << endl;
+
+    bytestring str("test");
+    bytestring other("asdf");
+    str = str.concat(other);
+
+    cout << "my bytestring: " << str.c_str() << endl;
     return 0;
 }
 
