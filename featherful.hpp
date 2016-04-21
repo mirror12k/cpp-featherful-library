@@ -29,6 +29,7 @@ public:
 
     char operator[](uint index) const;
     bytestring operator+(const bytestring& other) const;
+    bool operator==(const bytestring& other) const;
 
 
     typedef const char* const_iterator;
@@ -47,6 +48,9 @@ public:
     bool contains(const bytestring& needle, uint offset=0) const;
     int find(char c, uint offset=0) const;
     int find(const bytestring& needle, uint offset=0) const;
+
+    bool equal(const bytestring& other) const;
+    int compare(const bytestring& other) const;
 
     bool empty() const;
 

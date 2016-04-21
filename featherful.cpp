@@ -101,6 +101,10 @@ bytestring bytestring::operator+(const bytestring& other) const
     return this->concat(other);
 }
 
+bool bytestring::operator==(const bytestring& other) const
+{
+    return this->equal(other);
+}
 
 
 
@@ -241,6 +245,31 @@ int bytestring::find(const bytestring& needle, uint offset) const
             return iter - this->begin();
     }
     return -1;
+}
+
+bool bytestring::equal(const bytestring& other) const
+{
+    return this->compare(other) == 0;
+}
+
+int bytestring::compare(const bytestring& other) const
+{
+    bytestring::const_iterator iter = this->begin(), iter_end = this->end();
+    bytestring::const_iterator other_iter = other.begin(), other_iter_end = other.end();
+
+    for (; iter != iter_end && other_iter != other_iter_end; iter++, other_iter++)
+        if (*iter != *other_iter)
+            if (*iter < *other_iter)
+                return -1;
+            else
+                return 1;
+
+    if (iter != iter_end)
+        return -1;
+    else if (other_iter != other_iter_end)
+        return 1;
+    else
+        return 0;
 }
 
 

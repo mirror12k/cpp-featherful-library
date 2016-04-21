@@ -63,6 +63,17 @@ int main (int argc, char** argv)
     cout << "is '' empty? " << bytestring("").empty() << endl;
     cout << "is '' empty? " << bytestring().empty() << endl;
 
+
+    cout << "'hello world!' vs 'asdf': " << bytestring("hello world!").compare(bytestring("asdf")) << endl;
+    cout << "'hello world!' vs 'hell': " << bytestring("hello world!").compare(bytestring("hell")) << endl;
+    cout << "'hello world!' vs 'hetl': " << bytestring("hello world!").compare(bytestring("hetl")) << endl;
+    cout << "'hello world!' vs 'world': " << bytestring("hello world!").compare(bytestring("world")) << endl;
+    cout << "'hello world!' vs '': " << bytestring("hello world!").compare(bytestring("")) << endl;
+    cout << "'hello world!' vs 'hello world!': " << bytestring("hello world!").compare(bytestring("hello world!")) << endl;
+    cout << "'hello world!' vs 'hello world!asdf': " << bytestring("hello world!").compare(bytestring("hello world!asdf")) << endl;
+
+    cout << "'hello world!' == 'hello world!': " << (bytestring("hello world!") == bytestring("hello world!")) << endl;
+    cout << "'hello world!' == 'asdf!': " << (bytestring("hello world!") == bytestring("asdf!")) << endl;
 //    str = str.concat(other);
 //    cout << "my bytestring: " << str.c_str() << endl;
 
