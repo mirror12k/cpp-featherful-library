@@ -126,7 +126,7 @@ int main (int argc, char** argv)
 
     cout << "shifted: " << l.shift().c_str() << endl;
 
-    for (list<bytestring>::const_iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
+    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
     {
         cout << (*iter).c_str() << endl;
     }
