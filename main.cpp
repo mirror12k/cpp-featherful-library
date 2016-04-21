@@ -98,12 +98,21 @@ int main (int argc, char** argv)
     cout << "'hello world!' /- '?' : " << bytestring("hello world!").splice(bytestring("?"), -1, -1).c_str() << endl;
     cout << "'hello world!' /- ' welcome' : " << bytestring("hello world!").splice(bytestring(" welcome"), 4).c_str() << endl;
 
+    cout << ".remove():" << endl;
+    cout << "'this is my apple' : " << bytestring("this is my apple").remove(bytestring("my ")).c_str() << endl;
+    cout << "'abcbcdebbcc' : " << bytestring("abcbcdebbcc").remove(bytestring("bc")).c_str() << endl;
+
     cout << ".replace():" << endl;
     cout << "'hi there $name' : " << bytestring("hi there $name").replace(bytestring("$name"), bytestring("steve")).c_str() << endl;
     cout << "'$a and $a with $a': " << bytestring("$a and $a with $a").replace(bytestring("$a"), bytestring("!_!")).c_str() << endl;
     cout << "'$a$$a$aa': " << bytestring("$a$$a$aa").replace(bytestring("$a"), bytestring("-_-")).c_str() << endl;
     cout << "'/../asdf/../../': " << bytestring("/../asdf/../../").replace(bytestring("/.."), bytestring("")).c_str() << endl;
 
+    cout << ".multiply():" << endl;
+    cout << "'_abc_' * 0: " << bytestring("_abc_").multiply(0).c_str() << endl;
+    cout << "'_abc_' * 2: " << bytestring("_abc_").multiply(2).c_str() << endl;
+    cout << "'_abc_' * 3: " << bytestring("_abc_").multiply(3).c_str() << endl;
+    cout << "'_+-' * 9: " << bytestring("_+-").multiply(9).c_str() << endl;
 
     return 0;
 }

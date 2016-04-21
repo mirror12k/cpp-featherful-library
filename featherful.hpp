@@ -46,6 +46,7 @@ public:
 
     bytestring insert(const bytestring& other, int offset=-1) const;
     bytestring erase(int start, int end=-1) const;
+    bytestring remove(const bytestring& needle) const;
     bytestring replace(const bytestring& needle, const bytestring& replacement) const;
     bytestring splice(const bytestring& segment, int start, int end=-1) const;
 

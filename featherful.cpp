@@ -257,6 +257,18 @@ bytestring bytestring::erase(int start, int end) const
     return bytestring(2, lengths, buffers);
 }
 
+bytestring bytestring::remove(const bytestring& needle) const
+{
+    bytestring result = *this;
+    int offset = result.find(needle);
+    while (offset != -1)
+    {
+        result = result.erase(offset, offset + needle.length() - 1);
+        offset = result.find(needle, offset);
+    }
+    return result;
+}
+
 bytestring bytestring::replace(const bytestring& needle, const bytestring& replacement) const
 {
     bytestring result = *this;
@@ -308,6 +320,18 @@ bytestring bytestring::splice(const bytestring& segment, int start, int end) con
     return bytestring(3, lengths, buffers);
 }
 
+
+
+
+bytestring bytestring::multiply(uint times) const
+{
+    if (times == 0)
+        return bytestring();
+    else if (times == 1)
+        return *this;
+    else
+        return times & 0x1 ? *this + this->concat(*this).multiply(times / 2) : this->concat(*this).multiply(times / 2);
+}
 
 
 
