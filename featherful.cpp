@@ -23,6 +23,9 @@ bytestring::bytestring(const char* s) : bytestring(strlen(s), s) {}
 bytestring::bytestring(uint length, const char* s)
 {
     char* allocated = (char*)malloc(length);
+    if (allocated == nullptr)
+        throw exception();
+
     memcpy(allocated, s, length);
     this->i_length = length;
     this->a_buffer = allocated;
@@ -35,6 +38,8 @@ bytestring::bytestring(uint string_count, uint* length, const char** s)
         total_length += length[i];
 
     char* allocated = (char*)malloc(total_length);
+    if (allocated == nullptr)
+        throw exception();
 
     uint offset = 0;
     for (uint i = 0; i < string_count; i++)
@@ -47,18 +52,16 @@ bytestring::bytestring(uint string_count, uint* length, const char** s)
     this->a_buffer = allocated;
 }
 
-bytestring::bytestring(const bytestring& other) : bytestring(other.length(), other.buffer()) {
-//    printf("debug copy constructor\n");
-}
+bytestring::bytestring(const bytestring& other) : bytestring(other.length(), other.buffer()) {}
 
 bytestring& bytestring::operator=(const bytestring& other)
 {
-//    printf("debug equal copier\n");
-
     free((void*)this->a_buffer);
 
     this->i_length = other.length();
     char* allocated = (char*)malloc(this->i_length);
+    if (allocated == nullptr)
+        throw exception();
     memcpy(allocated, other.buffer(), this->i_length);
     this->a_buffer = allocated;
 
@@ -67,7 +70,6 @@ bytestring& bytestring::operator=(const bytestring& other)
 
 bytestring::~bytestring()
 {
-//    printf("debug dtor\n");
     free((void*)this->a_buffer);
 }
 
@@ -86,13 +88,15 @@ const char* bytestring::buffer() const
 char* bytestring::c_str() const
 {
     char* str = (char*)malloc(this->i_length + 1);
+    if (str == nullptr)
+        throw exception();
     memcpy(str, this->a_buffer, this->i_length);
     str[this->i_length] = '\0';
     return str;
 }
 
 
-char bytestring::operator[](uint index) const
+char bytestring::operator[](int index) const
 {
     return this->char_at(index);
 }
@@ -100,6 +104,16 @@ char bytestring::operator[](uint index) const
 bytestring bytestring::operator+(const bytestring& other) const
 {
     return this->concat(other);
+}
+
+bytestring bytestring::operator-(const bytestring& other) const
+{
+    return this->remove(other);
+}
+
+bytestring bytestring::operator*(uint times) const
+{
+    return this->multiply(times);
 }
 
 bool bytestring::operator==(const bytestring& other) const
@@ -169,6 +183,8 @@ bytestring bytestring::strip(char c) const
 {
     uint stripped_offset = 0;
     char* stripped_buffer = (char*)malloc(this->i_length);
+    if (stripped_buffer == nullptr)
+        throw exception();
 
     for (bytestring::const_iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; iter++)
         if (*iter != c)
@@ -335,7 +351,7 @@ bytestring bytestring::multiply(uint times) const
 
 
 
-char bytestring::char_at(uint index) const
+char bytestring::char_at(int index) const
 {
     if (index < 0)
         throw exception();
@@ -394,10 +410,12 @@ int bytestring::compare(const bytestring& other) const
 
     for (; iter != iter_end && other_iter != other_iter_end; iter++, other_iter++)
         if (*iter != *other_iter)
+        {
             if (*iter < *other_iter)
                 return -1;
             else
                 return 1;
+        }
 
     if (iter != iter_end)
         return -1;
@@ -413,6 +431,33 @@ bool bytestring::empty() const
     return this->i_length == 0;
 }
 
+
+
+
+
+
+//template <class T>
+//typename list<T>::const_iterator& list<T>::
+//template <class T>
+//typename list<T>::const_iterator& list<T>::end() const
+//{
+//    return *this->p_tail_link;
+//}
+
+
+//template <class T>
+//list<T>::list_link::list_link(list_link* prev, T* item, list_link* next)
+//{
+//    this->p_item = item;
+//    this->p_prev = prev;
+//    this->p_next = next;
+//}
+//
+//template <class T>
+//T& list<T>::list_link::operator*() const
+//{
+//    return *this->p_item;
+//}
 
 
 }
