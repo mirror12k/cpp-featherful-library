@@ -256,8 +256,57 @@ bytestring bytestring::erase(int start, int end) const
 
     return bytestring(2, lengths, buffers);
 }
-//bytestring replace(const bytestring& needle, const bytestring& replacement) const;
-//bytestring splice(const bytestring& segment, int start, int end=-1) const;
+
+bytestring bytestring::replace(const bytestring& needle, const bytestring& replacement) const
+{
+    bytestring result = *this;
+    int offset = result.find(needle);
+    while (offset != -1)
+    {
+        result = result.splice(replacement, offset, offset + needle.length() - 1);
+        offset = result.find(needle, offset + replacement.length());
+    }
+    return result;
+}
+
+bytestring bytestring::splice(const bytestring& segment, int start, int end) const
+{
+    if (start < 0)
+    {
+        start = this->i_length + start;
+        if (start < 0)
+            throw exception();
+    }
+    else if (start >= this->i_length)
+        throw exception();
+
+    if (end < 0)
+    {
+        end = this->i_length + end;
+        if (end < 0)
+            throw exception();
+    }
+    else if (end >= this->i_length)
+        throw exception();
+
+    end++;
+
+    if (start > end)
+        throw exception();
+
+    uint lengths[3];
+    const char* buffers[3];
+
+    lengths[0] = start;
+    lengths[1] = segment.length();
+    lengths[2] = this->length() - end;
+
+    buffers[0] = this->buffer();
+    buffers[1] = segment.buffer();
+    buffers[2] = this->buffer() + end;
+
+    return bytestring(3, lengths, buffers);
+}
 
 
 

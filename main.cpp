@@ -92,6 +92,19 @@ int main (int argc, char** argv)
     cout << "'hello world!' - -5:-2 : " << bytestring("hello world!").erase(-5, -2).c_str() << endl;
 
 
+    cout << ".splice():" << endl;
+    cout << "'hello world!' /- 'goodbye' : " << bytestring("hello world!").splice(bytestring("goodbye"), 0, 4).c_str() << endl;
+    cout << "'hello world!' /- 'steve' : " << bytestring("hello world!").splice(bytestring("steve"), 6, -2).c_str() << endl;
+    cout << "'hello world!' /- '?' : " << bytestring("hello world!").splice(bytestring("?"), -1, -1).c_str() << endl;
+    cout << "'hello world!' /- ' welcome' : " << bytestring("hello world!").splice(bytestring(" welcome"), 4).c_str() << endl;
+
+    cout << ".replace():" << endl;
+    cout << "'hi there $name' : " << bytestring("hi there $name").replace(bytestring("$name"), bytestring("steve")).c_str() << endl;
+    cout << "'$a and $a with $a': " << bytestring("$a and $a with $a").replace(bytestring("$a"), bytestring("!_!")).c_str() << endl;
+    cout << "'$a$$a$aa': " << bytestring("$a$$a$aa").replace(bytestring("$a"), bytestring("-_-")).c_str() << endl;
+    cout << "'/../asdf/../../': " << bytestring("/../asdf/../../").replace(bytestring("/.."), bytestring("")).c_str() << endl;
+
+
     return 0;
 }
 
