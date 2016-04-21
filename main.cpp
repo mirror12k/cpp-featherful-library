@@ -117,11 +117,14 @@ int main (int argc, char** argv)
 
 
     list<bytestring> l;
-    l.push(new bytestring("hello"));
-    l.push(new bytestring("asdf"));
     l.push(new bytestring("qwerty"));
+    l.push(new bytestring("asdf"));
+    l.push(new bytestring("hello"));
+    l.unshift(new bytestring("world"));
 
     cout << "popped: " << l.pop().c_str() << endl;
+
+    cout << "shifted: " << l.shift().c_str() << endl;
 
     for (list<bytestring>::const_iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
     {

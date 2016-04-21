@@ -155,6 +155,13 @@ public:
         this->p_tail_link->p_prev = link;
     }
 
+    void unshift(T* item)
+    {
+        list_link* link = new list_link(this->p_head_link, item, this->p_head_link->p_next);
+        link->p_next->p_prev = link;
+        this->p_head_link->p_next = link;
+    }
+
     T& pop()
     {
         list_link* link = this->p_tail_link->p_prev;
@@ -165,6 +172,15 @@ public:
         return *item;
     }
 
+    T& shift()
+    {
+        list_link* link = this->p_head_link->p_next;
+        this->p_head_link->p_next = link->p_next;
+        link->p_next->p_prev = this->p_head_link;
+        T* item = link->p_item;
+        delete link;
+        return *item;
+    }
 
 
 

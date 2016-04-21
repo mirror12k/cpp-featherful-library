@@ -432,34 +432,6 @@ bool bytestring::empty() const
 }
 
 
-
-
-
-
-//template <class T>
-//typename list<T>::const_iterator& list<T>::
-//template <class T>
-//typename list<T>::const_iterator& list<T>::end() const
-//{
-//    return *this->p_tail_link;
-//}
-
-
-//template <class T>
-//list<T>::list_link::list_link(list_link* prev, T* item, list_link* next)
-//{
-//    this->p_item = item;
-//    this->p_prev = prev;
-//    this->p_next = next;
-//}
-//
-//template <class T>
-//T& list<T>::list_link::operator*() const
-//{
-//    return *this->p_item;
-//}
-
-
 }
 
 
