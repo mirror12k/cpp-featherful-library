@@ -17,6 +17,7 @@ const char* empty_buffer = "";
 
 
 bytestring::bytestring() : bytestring(empty_buffer) {}
+bytestring::bytestring(char c) : bytestring(1, &c) {}
 bytestring::bytestring(const char* s) : bytestring(strlen(s), s) {}
 
 bytestring::bytestring(uint length, const char* s)
@@ -144,9 +145,7 @@ bytestring bytestring::substring(int start, int end) const
             throw exception();
     }
     else if (start >= this->i_length)
-    {
         throw exception();
-    }
 
     if (end < 0)
     {
@@ -155,16 +154,12 @@ bytestring bytestring::substring(int start, int end) const
             throw exception();
     }
     else if (end >= this->i_length)
-    {
         throw exception();
-    }
 
     end++;
 
     if (start > end)
-    {
         throw exception();
-    }
 
     return bytestring(end - start, this->a_buffer + start);
 }
@@ -198,6 +193,73 @@ bytestring bytestring::strip_whitespace() const
 {
     return this->strip(bytestring(" \t\r\n"));
 }
+
+
+bytestring bytestring::insert(const bytestring& other, int offset) const
+{
+    if (offset < 0)
+    {
+        offset = this->i_length + offset + 1;
+        if (offset < 0)
+            throw exception();
+    }
+    if (offset > this->i_length)
+        throw exception();
+
+    uint lengths[3];
+    const char* buffers[3];
+
+    lengths[0] = offset;
+    lengths[1] = other.length();
+    lengths[2] = this->length() - offset;
+
+    buffers[0] = this->buffer();
+    buffers[1] = other.buffer();
+    buffers[2] = this->buffer() + offset;
+
+    return bytestring(3, lengths, buffers);
+}
+
+bytestring bytestring::erase(int start, int end) const
+{
+    if (start < 0)
+    {
+        start = this->i_length + start;
+        if (start < 0)
+            throw exception();
+    }
+    else if (start >= this->i_length)
+        throw exception();
+
+    if (end < 0)
+    {
+        end = this->i_length + end;
+        if (end < 0)
+            throw exception();
+    }
+    else if (end >= this->i_length)
+        throw exception();
+
+    end++;
+
+    if (start > end)
+        throw exception();
+
+    uint lengths[2];
+    const char* buffers[2];
+
+    lengths[0] = start;
+    lengths[1] = this->length() - end;
+
+    buffers[0] = this->buffer();
+    buffers[1] = this->buffer() + end;
+
+    return bytestring(2, lengths, buffers);
+}
+//bytestring replace(const bytestring& needle, const bytestring& replacement) const;
+//bytestring splice(const bytestring& segment, int start, int end=-1) const;
+
+
 
 
 char bytestring::char_at(uint index) const

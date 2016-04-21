@@ -12,6 +12,7 @@ class bytestring
 {
 public:
     bytestring();
+    bytestring(char c);
     bytestring(const char* s);
     bytestring(uint length, const char* s);
     bytestring(uint string_count, uint* length, const char** s);
@@ -42,6 +43,14 @@ public:
     bytestring strip(char c) const;
     bytestring strip(const bytestring& chars) const;
     bytestring strip_whitespace() const;
+
+    bytestring insert(const bytestring& other, int offset=-1) const;
+    bytestring erase(int start, int end=-1) const;
+    bytestring replace(const bytestring& needle, const bytestring& replacement) const;
+    bytestring splice(const bytestring& segment, int start, int end=-1) const;
+
+    bytestring multiply(uint times) const;
+//    list<bytestring> divide(uint times) const;
 
     char char_at(uint index) const;
     bool contains(char c, uint offset=0) const;
