@@ -35,7 +35,6 @@ public:
 
     void init_empty();
     void destroy();
-    void copy(const list<T>& other);
     void pilfer_links(list_link* start, list_link* end, uint* length);
 
     iterator begin() const;
@@ -54,8 +53,12 @@ public:
     list<T> filter(const list_filterer<T>& filterer) const;
     list<T>& filter_inplace(const list_filterer<T>& filterer);
 
+    void copy(const list<T>& other);
+    list<T> clone();
     list<T>& concat(list<T>& other);
     list<T>& concat(list<T>&& other);
+    list<T>& concat(list<list<T>>& other);
+    list<T>& concat(list<list<T>>&& other);
 
     class list_link
     {
@@ -136,23 +139,6 @@ void list<T>::destroy()
     this->p_head_link = nullptr;
     this->p_tail_link = nullptr;
     this->i_length = 0;
-}
-
-template <class T>
-void list<T>::copy(const list<T>& other)
-{
-    this->destroy();
-    this->init_empty();
-
-    list_link* prev_link = this->p_head_link, *last_link = this->p_tail_link;
-    for (iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
-    {
-        list_link* link = new list_link(prev_link, new T(*iter), last_link);
-        prev_link->p_next = link;
-        prev_link = link;
-        this->i_length++;
-    }
-    last_link->p_prev = prev_link;
 }
 
 template <class T>
@@ -286,6 +272,28 @@ list<T>& list<T>::filter_inplace(const list_filterer<T>& filterer)
 
 
 
+template <class T>
+void list<T>::copy(const list<T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    list_link* prev_link = this->p_head_link, *last_link = this->p_tail_link;
+    for (iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+    {
+        list_link* link = new list_link(prev_link, new T(*iter), last_link);
+        prev_link->p_next = link;
+        prev_link = link;
+        this->i_length++;
+    }
+    last_link->p_prev = prev_link;
+}
+
+template <class T>
+list<T> list<T>::clone()
+{
+    return list<T>(*this);
+}
 
 template <class T>
 list<T>& list<T>::concat(list<T>& other)
@@ -298,6 +306,14 @@ template <class T>
 list<T>& list<T>::concat(list<T>&& other)
 {
     other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::concat(list<list<T>>& other)
+{
+    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
     return *this;
 }
 
