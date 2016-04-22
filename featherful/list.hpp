@@ -55,9 +55,14 @@ public:
 
     template <class K>
     list<K> map(const list_mapper<T, K>& mapper) const;
+    template <class K>
+    list<K> map(K* (*mapper_function)(const T&)) const;
     list<T>& map_inplace(const list_mapper<T, T>& mapper);
+    list<T>& map_inplace(T* (*mapper_function)(const T&));
     list<T> filter(const list_filterer<T>& filterer) const;
+    list<T> filter(bool (*filter_function)(const T&)) const;
     list<T>& filter_inplace(const list_filterer<T>& filterer);
+    list<T>& filter_inplace(bool (*filter_function)(const T&));
 
     void copy(const list<T>& other);
     list<T> clone();
@@ -286,11 +291,34 @@ list<K> list<T>::map(const list_mapper<T, K>& mapper) const
 }
 
 template <class T>
+template <class K>
+list<K> list<T>::map(K* (*mapper_function)(const T&)) const
+{
+    list<K> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        result.push(mapper_function(*iter));
+    return result;
+}
+
+
+template <class T>
 list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
 {
     for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
     {
         T* val = mapper.map(*link->p_item);
+        delete link->p_item;
+        link->p_item = val;
+    }
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::map_inplace(T* (*mapper_function)(const T&))
+{
+    for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
+    {
+        T* val = mapper_function(*link->p_item);
         delete link->p_item;
         link->p_item = val;
     }
@@ -304,6 +332,16 @@ list<T> list<T>::filter(const list_filterer<T>& filterer) const
     list<T> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
         if (filterer.filter(*iter))
+            result.push(new T(*iter));
+    return result;
+}
+
+template <class T>
+list<T> list<T>::filter(bool (*filter_function)(const T&)) const
+{
+    list<T> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (filter_function(*iter))
             result.push(new T(*iter));
     return result;
 }
@@ -322,6 +360,18 @@ list<T>& list<T>::filter_inplace(const list_filterer<T>& filterer)
     return *this;
 }
 
+template <class T>
+list<T>& list<T>::filter_inplace(bool (*filter_function)(const T&))
+{
+    for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
+        if (! filter_function(*link->p_item))
+        {
+            link->p_next->p_prev = link->p_prev;
+            link->p_prev->p_next = link->p_next;
+            delete link->p_item;
+        }
+    return *this;
+}
 
 
 template <class T>

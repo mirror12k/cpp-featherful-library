@@ -35,6 +35,16 @@ public:
     const uint i_length;
 };
 
+bytestring* hijacker_function(const bytestring& s)
+{
+    return new bytestring(bytestring("hijacked ") + s);
+}
+
+bool is_longer_than_5(const bytestring& s)
+{
+    return s.length() >= 5;
+}
+
 int main (int argc, char** argv)
 {
     cout << "hello world" << endl;
@@ -174,7 +184,7 @@ int main (int argc, char** argv)
 //    ltop.push(new list<bytestring>(l3));
 //    ltop.push(new list<bytestring>(l2));
 
-    l += l.map(string_mapper()) + l2 + l3;
+    l += l.filter(is_longer_than_5).map(hijacker_function) + l2 + l3;
 //    l.concat();
 
 
