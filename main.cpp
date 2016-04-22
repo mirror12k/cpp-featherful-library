@@ -169,18 +169,18 @@ int main (int argc, char** argv)
     list<bytestring> l3;
     l3.push(new bytestring("newnewnew!"));
     l3.push(new bytestring("testtesttest!"));
-    list<list<bytestring>> ltop;
-    ltop.push(new list<bytestring>(l2));
-    ltop.push(new list<bytestring>(l3));
-    ltop.push(new list<bytestring>(l2));
+//    list<list<bytestring>> ltop;
+//    ltop.push(new list<bytestring>(l2));
+//    ltop.push(new list<bytestring>(l3));
+//    ltop.push(new list<bytestring>(l2));
 
-    l.concat(l.map(string_mapper()));
-    l.concat(ltop);
+    l += l.map(string_mapper()) + l2 + l3;
+//    l.concat();
 
 
 //    l.concat(l.clone());
 
-    cout << "at 3: " << l.at(3).c_str() << endl;
+    cout << "at 3: " << l[3].c_str() << endl;
 
     cout << "length: " << l.length() << endl;
     for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; iter++)

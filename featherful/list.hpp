@@ -32,6 +32,11 @@ public:
     ~list();
 
     list<T>& operator=(list<T> other);
+    T& operator[](uint index);
+    list<T>& operator+(list<T>& other);
+    list<T>& operator+(list<T>&& other);
+    list<T>& operator+=(list<T>& other);
+    list<T>& operator+=(list<T>&& other);
 
     void init_empty();
     void destroy();
@@ -121,6 +126,38 @@ list<T>& list<T>::operator=(list<T> other)
 //    other.pilfer_links(this->p_head_link, this->p_tail_link, &this->i_length);
     return *this;
 }
+
+template <class T>
+T& list<T>::operator[](uint index)
+{
+    return this->at(index);
+}
+template <class T>
+list<T>& list<T>::operator+(list<T>& other)
+{
+    this->concat(other);
+    return *this;
+}
+template <class T>
+list<T>& list<T>::operator+(list<T>&& other)
+{
+    this->concat(other);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::operator+=(list<T>& other)
+{
+    this->concat(other);
+    return *this;
+}
+template <class T>
+list<T>& list<T>::operator+=(list<T>&& other)
+{
+    this->concat(other);
+    return *this;
+}
+
 
 template <class T>
 void list<T>::init_empty()
