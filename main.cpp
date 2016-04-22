@@ -209,6 +209,7 @@ int main (int argc, char** argv)
 //    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; iter++)
 //        cout << "iter: " << *iter << endl;
 
+
     cout << "sum: " << list<bytestring>().map(bytestring_length).reduce(sum, 10) << endl;
 
     return 0;

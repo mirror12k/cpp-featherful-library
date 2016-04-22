@@ -432,6 +432,69 @@ T list<T>::reduce(T (*reducer_function)(const T&, const T&), const T& init) cons
 
 
 template <class T>
+bool list<T>::all(list_filterer<T>& filterer)
+{
+    list<T> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (! filterer.filter(*iter))
+            return false;
+    return true;
+}
+
+template <class T>
+bool list<T>::all(bool (*filter_function)(const T&))
+{
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (! filter_function(*iter))
+            return false;
+    return true;
+}
+
+template <class T>
+bool list<T>::none(list_filterer<T>& filterer)
+{
+    list<T> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (filterer.filter(*iter))
+            return false;
+    return true;
+}
+
+template <class T>
+bool list<T>::none(bool (*filter_function)(const T&))
+{
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (filter_function(*iter))
+            return false;
+    return true;
+}
+
+template <class T>
+bool list<T>::any(list_filterer<T>& filterer)
+{
+    return ! this->none(filterer);
+}
+
+template <class T>
+bool list<T>::any(bool (*filter_function)(const T&))
+{
+    return ! this->none(filter_function);
+}
+
+template <class T>
+bool list<T>::notall(list_filterer<T>& filterer)
+{
+    return ! this->all(filterer);
+}
+template <class T>
+bool list<T>::notall(bool (*filter_function)(const T&))
+{
+    return ! this->all(filter_function);
+}
+
+
+
+template <class T>
 void list<T>::copy(const list<T>& other)
 {
     this->destroy();
