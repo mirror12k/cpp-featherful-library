@@ -180,8 +180,10 @@ int main (int argc, char** argv)
 
 //    l.concat(l.clone());
 
+    cout << "at 3: " << l.at(3).c_str() << endl;
+
     cout << "length: " << l.length() << endl;
-    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
+    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; iter++)
         cout << "iter: " << (*iter).c_str() << endl;
 
 

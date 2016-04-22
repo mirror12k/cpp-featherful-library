@@ -46,6 +46,7 @@ public:
     void unshift(T* item);
     T pop();
     T shift();
+    T& at(uint index) const;
 
     template <class K>
     list<K> map(const list_mapper<T, K>& mapper) const;
@@ -71,6 +72,10 @@ public:
         bool operator==(const list_link& other) const;
         list_link& operator++();
         list_link& operator--();
+        list_link& operator++(int);
+        list_link& operator--(int);
+        list_link& operator+(int amount);
+        list_link& operator-(int amount);
 
         T* p_item;
         list_link* p_prev;
@@ -221,6 +226,16 @@ T list<T>::shift()
     return *item;
 }
 
+template <class T>
+T& list<T>::at(uint index) const
+{
+    if (index >= this->i_length)
+        throw "death";
+    else
+        return *(this->begin() + index);
+}
+
+
 
 
 template <class T>
@@ -317,6 +332,14 @@ list<T>& list<T>::concat(list<list<T>>& other)
     return *this;
 }
 
+template <class T>
+list<T>& list<T>::concat(list<list<T>>&& other)
+{
+    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
 
 
 
@@ -367,6 +390,44 @@ typename list<T>::list_link& list<T>::list_link::operator--()
 {
     *this = *this->p_prev;
     return *this;
+}
+template <class T>
+typename list<T>::list_link& list<T>::list_link::operator++(int)
+{
+    list<T>::list_link link = *this;
+    *this = *this->p_next;
+    return link;
+}
+template <class T>
+typename list<T>::list_link& list<T>::list_link::operator--(int)
+{
+    list<T>::list_link link = *this;
+    *this = *this->p_prev;
+    return link;
+}
+template <class T>
+typename list<T>::list_link& list<T>::list_link::operator+(int amount)
+{
+    list<T>::list_link link = *this;
+    if (amount > 0)
+        for (int i = 0; i < amount; i++)
+            link = *link.p_next;
+    else
+        for (int i = 0; i > amount; i--)
+            link = *link.p_prev;
+    return link;
+}
+template <class T>
+typename list<T>::list_link& list<T>::list_link::operator-(int amount)
+{
+    list<T>::list_link link = *this;
+    if (amount > 0)
+        for (int i = 0; i < amount; i++)
+            link = *link.p_prev;
+    else
+        for (int i = 0; i > amount; i--)
+            link = *link.p_next;
+    return link;
 }
 
 
