@@ -16,9 +16,23 @@ class string_mapper : public featherful::list_mapper<bytestring, bytestring>
 {
 public:
     virtual bytestring* map(const bytestring& s) const
-    {
-        return new bytestring(s + bytestring(" lol hijack"));
-    }
+    { return new bytestring(s + bytestring(" lol hijack")); }
+};
+
+class string_length_mapper : public featherful::list_mapper<bytestring, int>
+{
+public:
+    virtual int* map(const bytestring& s) const
+    { return new int(s.length()); }
+};
+
+class string_length_grepper : public featherful::list_grepper<bytestring>
+{
+public:
+    string_length_grepper(uint length) : i_length(length) {}
+    virtual bool grep(const bytestring& s) const
+    { return s.length() > this->i_length; }
+    const uint i_length;
 };
 
 int main (int argc, char** argv)
@@ -130,6 +144,7 @@ int main (int argc, char** argv)
     list<bytestring> l;
     l.push(new bytestring("qwerty"));
     l.push(new bytestring("asdf"));
+    l.push(new bytestring("qwertyuiop"));
     l.push(new bytestring("hello"));
     l.unshift(new bytestring("world"));
 
@@ -137,16 +152,24 @@ int main (int argc, char** argv)
 
     cout << "shifted: " << l.shift().c_str() << endl;
 
-    l.map_inplace(string_mapper());
+//    l.map_inplace(string_mapper());
+//    list<int> lengths = l.map(string_length_mapper());
+
+//    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
+//        cout << "iter: " << (*iter).c_str() << endl;
+//    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; ++iter)
+//        cout << "lengths: " << *iter << endl;
+
+//    list<bytestring> reduced = l.grep(string_length_grepper(5));
+    l.grep_inplace(string_length_grepper(5));
 
     for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
-    {
         cout << "iter: " << (*iter).c_str() << endl;
-    }
 
     cout << "length: " << l.length() << endl;
 
     l.destroy();
+//    reduced.destroy();
 
     return 0;
 }

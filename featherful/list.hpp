@@ -11,6 +11,12 @@ public:
     virtual B* map(const A& item) const = 0;
 };
 
+template <class T>
+class list_grepper
+{
+public:
+    virtual bool grep(const T& item) const = 0;
+};
 
 template <class T>
 class list
@@ -32,12 +38,14 @@ public:
 
     void push(T* item);
     void unshift(T* item);
-    T& pop();
-    T& shift();
+    T pop();
+    T shift();
 
     template <class K>
     list<K> map(const list_mapper<T, K>& mapper);
     list<T>& map_inplace(const list_mapper<T, T>& mapper);
+    list<T> grep(const list_grepper<T>& grepper);
+    list<T>& grep_inplace(const list_grepper<T>& grepper);
 
     class list_link
     {
@@ -129,7 +137,7 @@ void list<T>::unshift(T* item)
 
 
 template <class T>
-T& list<T>::pop()
+T list<T>::pop()
 {
     list_link* link = this->p_tail_link->p_prev;
     this->p_tail_link->p_prev = link->p_prev;
@@ -141,7 +149,7 @@ T& list<T>::pop()
 }
 
 template <class T>
-T& list<T>::shift()
+T list<T>::shift()
 {
     list_link* link = this->p_head_link->p_next;
     this->p_head_link->p_next = link->p_next;
@@ -177,6 +185,29 @@ list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
 }
 
 
+template <class T>
+list<T> list<T>::grep(const list_grepper<T>& grepper)
+{
+    list<T> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        if (grepper.grep(*iter))
+            result.push(new T(*iter));
+    return result;
+}
+
+
+template <class T>
+list<T>& list<T>::grep_inplace(const list_grepper<T>& grepper)
+{
+    for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
+        if (! grepper.grep(*link->p_item))
+        {
+            link->p_next->p_prev = link->p_prev;
+            link->p_prev->p_next = link->p_next;
+            delete link->p_item;
+        }
+    return *this;
+}
 
 
 
