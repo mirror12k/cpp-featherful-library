@@ -40,9 +40,19 @@ bytestring* hijacker_function(const bytestring& s)
     return new bytestring(bytestring("hijacked ") + s);
 }
 
+int* bytestring_length(const bytestring& s)
+{
+    return new int(s.length());
+}
+
 bool is_longer_than_5(const bytestring& s)
 {
     return s.length() >= 5;
+}
+
+int sum(const int& a, const int& b)
+{
+    return a + b;
 }
 
 int main (int argc, char** argv)
@@ -187,15 +197,19 @@ int main (int argc, char** argv)
     l += l.filter(is_longer_than_5).map(hijacker_function) + l2 + l3;
 //    l.concat();
 
+//    list<int> lengths = l.map(bytestring_length);
 
 //    l.concat(l.clone());
 
-    cout << "at 3: " << l[3].c_str() << endl;
+//    cout << "at 3: " << l[3].c_str() << endl;
 
     cout << "length: " << l.length() << endl;
     for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; iter++)
         cout << "iter: " << (*iter).c_str() << endl;
+//    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; iter++)
+//        cout << "iter: " << *iter << endl;
 
+    cout << "sum: " << list<bytestring>().map(bytestring_length).reduce(sum, 10) << endl;
 
     return 0;
 }

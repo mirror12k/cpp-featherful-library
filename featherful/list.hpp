@@ -4,18 +4,26 @@
 namespace featherful
 {
 
-template <class A, class B>
+template <class T, class R>
 class list_mapper
 {
 public:
-    virtual B* map(const A& item) const = 0;
+    virtual R* map(const T& item) = 0;
 };
 
 template <class T>
 class list_filterer
 {
 public:
-    virtual bool filter(const T& item) const = 0;
+    virtual bool filter(const T& item) = 0;
+};
+
+template <class T, class R>
+class list_reducer
+{
+public:
+    virtual void reduce(const T& item) = 0;
+    virtual R produce() = 0;
 };
 
 template <class T>
@@ -53,23 +61,39 @@ public:
     T shift();
     T& at(uint index) const;
 
-    template <class K>
-    list<K> map(const list_mapper<T, K>& mapper) const;
-    template <class K>
-    list<K> map(K* (*mapper_function)(const T&)) const;
-    list<T>& map_inplace(const list_mapper<T, T>& mapper);
-    list<T>& map_inplace(T* (*mapper_function)(const T&));
-    list<T> filter(const list_filterer<T>& filterer) const;
-    list<T> filter(bool (*filter_function)(const T&)) const;
-    list<T>& filter_inplace(const list_filterer<T>& filterer);
-    list<T>& filter_inplace(bool (*filter_function)(const T&));
-
     void copy(const list<T>& other);
     list<T> clone();
     list<T>& concat(list<T>& other);
     list<T>& concat(list<T>&& other);
     list<T>& concat(list<list<T>>& other);
     list<T>& concat(list<list<T>>&& other);
+
+    template <class K>
+    list<K> map(list_mapper<T, K>& mapper) const;
+    template <class K>
+    list<K> map(K* (*mapper_function)(const T&)) const;
+    list<T>& map_inplace(list_mapper<T, T>& mapper);
+    list<T>& map_inplace(T* (*mapper_function)(const T&));
+
+    list<T> filter(list_filterer<T>& filterer) const;
+    list<T> filter(bool (*filter_function)(const T&)) const;
+    list<T>& filter_inplace(list_filterer<T>& filterer);
+    list<T>& filter_inplace(bool (*filter_function)(const T&));
+
+    template <typename K>
+    K reduce(list_reducer<T, K>& reducer) const;
+    T reduce(T (*reducer_function)(const T&, const T&)) const;
+    T reduce(T (*reducer_function)(const T&, const T&), const T& init) const;
+
+    bool all(list_filterer<T>& filterer);
+    bool all(bool (*filter_function)(const T&));
+    bool none(list_filterer<T>& filterer);
+    bool none(bool (*filter_function)(const T&));
+    bool any(list_filterer<T>& filterer);
+    bool any(bool (*filter_function)(const T&));
+    bool notall(list_filterer<T>& filterer);
+    bool notall(bool (*filter_function)(const T&));
+
 
     class list_link
     {
@@ -282,7 +306,7 @@ T& list<T>::at(uint index) const
 
 template <class T>
 template <class K>
-list<K> list<T>::map(const list_mapper<T, K>& mapper) const
+list<K> list<T>::map(list_mapper<T, K>& mapper) const
 {
     list<K> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
@@ -302,7 +326,7 @@ list<K> list<T>::map(K* (*mapper_function)(const T&)) const
 
 
 template <class T>
-list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
+list<T>& list<T>::map_inplace(list_mapper<T, T>& mapper)
 {
     for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
     {
@@ -327,7 +351,7 @@ list<T>& list<T>::map_inplace(T* (*mapper_function)(const T&))
 
 
 template <class T>
-list<T> list<T>::filter(const list_filterer<T>& filterer) const
+list<T> list<T>::filter(list_filterer<T>& filterer) const
 {
     list<T> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
@@ -348,7 +372,7 @@ list<T> list<T>::filter(bool (*filter_function)(const T&)) const
 
 
 template <class T>
-list<T>& list<T>::filter_inplace(const list_filterer<T>& filterer)
+list<T>& list<T>::filter_inplace(list_filterer<T>& filterer)
 {
     for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
         if (! filterer.filter(*link->p_item))
@@ -371,6 +395,39 @@ list<T>& list<T>::filter_inplace(bool (*filter_function)(const T&))
             delete link->p_item;
         }
     return *this;
+}
+
+
+
+template <class T>
+template <typename K>
+K list<T>::reduce(list_reducer<T, K>& reducer) const
+{
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        reducer.reduce(*iter);
+    return reducer.produce();
+}
+
+template <class T>
+T list<T>::reduce(T (*reducer_function)(const T&, const T&)) const
+{
+    if (this->i_length == 0)
+        throw "can't reduce empty list!";
+
+    iterator iter = this->begin(), iter_end = this->end();
+    T result = *iter;
+    for (++iter; iter != iter_end; ++iter)
+        result = reducer_function(result, *iter);
+    return result;
+}
+
+template <class T>
+T list<T>::reduce(T (*reducer_function)(const T&, const T&), const T& init) const
+{
+    T result = init;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        result = reducer_function(result, *iter);
+    return result;
 }
 
 
