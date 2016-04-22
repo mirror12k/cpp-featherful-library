@@ -10,6 +10,17 @@ using std::endl;
 using featherful::bytestring;
 using featherful::list;
 
+
+
+class string_mapper : public featherful::list_mapper<bytestring, bytestring>
+{
+public:
+    virtual bytestring* map(const bytestring& s) const
+    {
+        return new bytestring(s + bytestring(" lol hijack"));
+    }
+};
+
 int main (int argc, char** argv)
 {
     cout << "hello world" << endl;
@@ -126,10 +137,16 @@ int main (int argc, char** argv)
 
     cout << "shifted: " << l.shift().c_str() << endl;
 
+    l.map_inplace(string_mapper());
+
     for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
     {
-        cout << (*iter).c_str() << endl;
+        cout << "iter: " << (*iter).c_str() << endl;
     }
+
+    cout << "length: " << l.length() << endl;
+
+    l.destroy();
 
     return 0;
 }

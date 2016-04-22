@@ -4,6 +4,14 @@
 namespace featherful
 {
 
+template <class A, class B>
+class list_mapper
+{
+public:
+    virtual B* map(const A& item) const = 0;
+};
+
+
 template <class T>
 class list
 {
@@ -14,16 +22,22 @@ public:
     typedef list_link iterator;
 
     list();
-    ~list();
+
+    void destroy();
 
     iterator begin() const;
     iterator end() const;
+
+    uint length() const;
 
     void push(T* item);
     void unshift(T* item);
     T& pop();
     T& shift();
 
+    template <class K>
+    list<K> map(const list_mapper<T, K>& mapper);
+    list<T>& map_inplace(const list_mapper<T, T>& mapper);
 
     class list_link
     {
@@ -46,6 +60,7 @@ private:
     list_link* p_head_link;
     list_link* p_tail_link;
 
+    uint i_length = 0;
 };
 
 
@@ -58,16 +73,19 @@ list<T>::list()
 }
 
 template <class T>
-list<T>::~list()
+void list<T>::destroy()
 {
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
         delete iter.p_item;
-    for (list_link* link = this->p_head_link; link != nullptr;)
+    for (list_link* link = this->p_head_link, *next = link->p_next; link != nullptr; link = next)
     {
-        list_link* next = link->p_next;
+        next = link->p_next;
         delete link;
-        link = next;
     }
+
+    this->p_head_link = nullptr;
+    this->p_tail_link = nullptr;
+    this->i_length = 0;
 }
 
 template <class T>
@@ -84,11 +102,19 @@ typename list<T>::iterator list<T>::end() const
 
 
 template <class T>
+uint list<T>::length() const
+{
+    return this->i_length;
+}
+
+
+template <class T>
 void list<T>::push(T* item)
 {
     list_link* link = new list_link(this->p_tail_link->p_prev, item, this->p_tail_link);
     link->p_prev->p_next = link;
     this->p_tail_link->p_prev = link;
+    this->i_length++;
 }
 
 template <class T>
@@ -97,11 +123,9 @@ void list<T>::unshift(T* item)
     list_link* link = new list_link(this->p_head_link, item, this->p_head_link->p_next);
     link->p_next->p_prev = link;
     this->p_head_link->p_next = link;
+    this->i_length++;
 }
 
-
-//template <class T>
-//list<T>::
 
 
 template <class T>
@@ -112,6 +136,7 @@ T& list<T>::pop()
     link->p_prev->p_next = this->p_tail_link;
     T* item = link->p_item;
     delete link;
+    this->i_length--;
     return *item;
 }
 
@@ -123,8 +148,35 @@ T& list<T>::shift()
     link->p_next->p_prev = this->p_head_link;
     T* item = link->p_item;
     delete link;
+    this->i_length--;
     return *item;
 }
+
+
+
+template <class T>
+template <class K>
+list<K> list<T>::map(const list_mapper<T, K>& mapper)
+{
+    list<K> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        result.push(mapper.map(*iter));
+    return result;
+}
+
+template <class T>
+list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
+{
+    for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
+    {
+        T* val = mapper.map(*link->p_item);
+        delete link->p_item;
+        link->p_item = val;
+    }
+    return *this;
+}
+
+
 
 
 
