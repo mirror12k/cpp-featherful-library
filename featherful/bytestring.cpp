@@ -70,6 +70,7 @@ bytestring& bytestring::operator=(const bytestring& other)
 
 bytestring::~bytestring()
 {
+//    printf("dtor %s\n", this->c_str());
     free((void*)this->a_buffer);
 }
 

@@ -154,22 +154,19 @@ int main (int argc, char** argv)
 
 //    l.map_inplace(string_mapper());
 //    list<int> lengths = l.map(string_length_mapper());
-
+//
 //    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
 //        cout << "iter: " << (*iter).c_str() << endl;
 //    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; ++iter)
 //        cout << "lengths: " << *iter << endl;
 
-//    list<bytestring> reduced = l.filter(string_length_filterer(5));
-    l.filter_inplace(string_length_filterer(5));
+    list<bytestring> result;
+    result = list<bytestring>(l.filter(string_length_filterer(5)));
 
-    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
+    cout << "length: " << result.length() << endl;
+    for (list<bytestring>::iterator iter = result.begin(), iter_end = result.end(); iter != iter_end; ++iter)
         cout << "iter: " << (*iter).c_str() << endl;
 
-    cout << "length: " << l.length() << endl;
-
-    l.destroy();
-//    reduced.destroy();
 
     return 0;
 }

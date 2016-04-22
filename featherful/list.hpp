@@ -28,8 +28,15 @@ public:
     typedef list_link iterator;
 
     list();
+    list(const list<T>& other);
+    ~list();
 
+    list<T>& operator=(list<T> other);
+
+    void init_empty();
     void destroy();
+    void copy(const list<T>& other);
+    void pilfer_links(list_link* start, list_link* end, uint* length);
 
     iterator begin() const;
     iterator end() const;
@@ -42,9 +49,9 @@ public:
     T shift();
 
     template <class K>
-    list<K> map(const list_mapper<T, K>& mapper);
+    list<K> map(const list_mapper<T, K>& mapper) const;
     list<T>& map_inplace(const list_mapper<T, T>& mapper);
-    list<T> filter(const list_filterer<T>& filterer);
+    list<T> filter(const list_filterer<T>& filterer) const;
     list<T>& filter_inplace(const list_filterer<T>& filterer);
 
     class list_link
@@ -75,6 +82,38 @@ private:
 template <class T>
 list<T>::list()
 {
+//    printf("ctor list\n");
+    this->init_empty();
+}
+
+
+template <class T>
+list<T>::list(const list<T>& other)
+{
+//    printf("ctor list copy\n");
+    this->init_empty();
+    this->copy(other);
+}
+
+template <class T>
+list<T>::~list()
+{
+//    printf("dtor list: %d\n", this->i_length);
+    this->destroy();
+}
+
+
+template <class T>
+list<T>& list<T>::operator=(list<T> other)
+{
+    this->copy(other);
+//    other.pilfer_links(this->p_head_link, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+void list<T>::init_empty()
+{
     this->p_head_link = new list_link(nullptr, nullptr, nullptr);
     this->p_tail_link = new list_link(this->p_head_link, nullptr, nullptr);
     this->p_head_link->p_next = this->p_tail_link;
@@ -93,6 +132,39 @@ void list<T>::destroy()
 
     this->p_head_link = nullptr;
     this->p_tail_link = nullptr;
+    this->i_length = 0;
+}
+
+template <class T>
+void list<T>::copy(const list<T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    list_link* prev_link = this->p_head_link, *last_link = this->p_tail_link;
+    for (iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+    {
+        list_link* link = new list_link(prev_link, new T(*iter), last_link);
+        prev_link->p_next = link;
+        prev_link = link;
+        this->i_length++;
+    }
+    last_link->p_prev = prev_link;
+}
+
+template <class T>
+void list<T>::pilfer_links(list_link* start, list_link* end, uint* length)
+{
+    if (this->i_length > 0)
+    {
+        start->p_next = this->p_head_link->p_next;
+        this->p_head_link->p_next->p_prev = start;
+        end->p_prev = this->p_tail_link->p_prev;
+        this->p_tail_link->p_prev->p_next = end;
+    }
+    this->p_head_link->p_next = this->p_tail_link;
+    this->p_tail_link->p_prev = this->p_head_link;
+    *length += this->i_length;
     this->i_length = 0;
 }
 
@@ -164,7 +236,7 @@ T list<T>::shift()
 
 template <class T>
 template <class K>
-list<K> list<T>::map(const list_mapper<T, K>& mapper)
+list<K> list<T>::map(const list_mapper<T, K>& mapper) const
 {
     list<K> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
@@ -186,7 +258,7 @@ list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
 
 
 template <class T>
-list<T> list<T>::filter(const list_filterer<T>& filterer)
+list<T> list<T>::filter(const list_filterer<T>& filterer) const
 {
     list<T> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
