@@ -15,22 +15,22 @@ using featherful::list;
 class string_mapper : public featherful::list_mapper<bytestring, bytestring>
 {
 public:
-    virtual bytestring* map(const bytestring& s) const
+    bytestring* map(const bytestring& s) const
     { return new bytestring(s + bytestring(" lol hijack")); }
 };
 
 class string_length_mapper : public featherful::list_mapper<bytestring, int>
 {
 public:
-    virtual int* map(const bytestring& s) const
+    int* map(const bytestring& s) const
     { return new int(s.length()); }
 };
 
-class string_length_grepper : public featherful::list_grepper<bytestring>
+class string_length_filterer : public featherful::list_filterer<bytestring>
 {
 public:
-    string_length_grepper(uint length) : i_length(length) {}
-    virtual bool grep(const bytestring& s) const
+    string_length_filterer(uint length) : i_length(length) {}
+    bool filter(const bytestring& s) const
     { return s.length() > this->i_length; }
     const uint i_length;
 };
@@ -160,8 +160,8 @@ int main (int argc, char** argv)
 //    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; ++iter)
 //        cout << "lengths: " << *iter << endl;
 
-//    list<bytestring> reduced = l.grep(string_length_grepper(5));
-    l.grep_inplace(string_length_grepper(5));
+//    list<bytestring> reduced = l.filter(string_length_filterer(5));
+    l.filter_inplace(string_length_filterer(5));
 
     for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
         cout << "iter: " << (*iter).c_str() << endl;

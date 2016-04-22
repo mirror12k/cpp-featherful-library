@@ -12,10 +12,10 @@ public:
 };
 
 template <class T>
-class list_grepper
+class list_filterer
 {
 public:
-    virtual bool grep(const T& item) const = 0;
+    virtual bool filter(const T& item) const = 0;
 };
 
 template <class T>
@@ -44,8 +44,8 @@ public:
     template <class K>
     list<K> map(const list_mapper<T, K>& mapper);
     list<T>& map_inplace(const list_mapper<T, T>& mapper);
-    list<T> grep(const list_grepper<T>& grepper);
-    list<T>& grep_inplace(const list_grepper<T>& grepper);
+    list<T> filter(const list_filterer<T>& filterer);
+    list<T>& filter_inplace(const list_filterer<T>& filterer);
 
     class list_link
     {
@@ -186,21 +186,21 @@ list<T>& list<T>::map_inplace(const list_mapper<T, T>& mapper)
 
 
 template <class T>
-list<T> list<T>::grep(const list_grepper<T>& grepper)
+list<T> list<T>::filter(const list_filterer<T>& filterer)
 {
     list<T> result;
     for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
-        if (grepper.grep(*iter))
+        if (filterer.filter(*iter))
             result.push(new T(*iter));
     return result;
 }
 
 
 template <class T>
-list<T>& list<T>::grep_inplace(const list_grepper<T>& grepper)
+list<T>& list<T>::filter_inplace(const list_filterer<T>& filterer)
 {
     for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
-        if (! grepper.grep(*link->p_item))
+        if (! filterer.filter(*link->p_item))
         {
             link->p_next->p_prev = link->p_prev;
             link->p_prev->p_next = link->p_next;
