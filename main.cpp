@@ -159,12 +159,18 @@ int main (int argc, char** argv)
 //        cout << "iter: " << (*iter).c_str() << endl;
 //    for (list<int>::iterator iter = lengths.begin(), iter_end = lengths.end(); iter != iter_end; ++iter)
 //        cout << "lengths: " << *iter << endl;
+//
+//    list<bytestring> result;
+//    result = list<bytestring>());
+//    l.filter(string_length_filterer(5);
+    list<bytestring> l2;
+    l2.push(new bytestring("new!"));
+    l2.push(new bytestring("test!"));
+    l.concat(l.map(string_mapper()));
+    l.concat(l2);
 
-    list<bytestring> result;
-    result = list<bytestring>(l.filter(string_length_filterer(5)));
-
-    cout << "length: " << result.length() << endl;
-    for (list<bytestring>::iterator iter = result.begin(), iter_end = result.end(); iter != iter_end; ++iter)
+    cout << "length: " << l.length() << endl;
+    for (list<bytestring>::iterator iter = l.begin(), iter_end = l.end(); iter != iter_end; ++iter)
         cout << "iter: " << (*iter).c_str() << endl;
 
 

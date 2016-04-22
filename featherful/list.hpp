@@ -54,6 +54,9 @@ public:
     list<T> filter(const list_filterer<T>& filterer) const;
     list<T>& filter_inplace(const list_filterer<T>& filterer);
 
+    list<T>& concat(list<T>& other);
+    list<T>& concat(list<T>&& other);
+
     class list_link
     {
     public:
@@ -278,6 +281,23 @@ list<T>& list<T>::filter_inplace(const list_filterer<T>& filterer)
             link->p_prev->p_next = link->p_next;
             delete link->p_item;
         }
+    return *this;
+}
+
+
+
+
+template <class T>
+list<T>& list<T>::concat(list<T>& other)
+{
+    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::concat(list<T>&& other)
+{
+    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
     return *this;
 }
 
