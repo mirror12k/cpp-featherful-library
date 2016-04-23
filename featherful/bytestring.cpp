@@ -174,7 +174,7 @@ bytestring bytestring::substring(int start, int end) const
     end++;
 
     if (start > end)
-        throw exception();
+        return bytestring();
 
     return bytestring(end - start, this->a_buffer + start);
 }
@@ -346,8 +346,71 @@ bytestring bytestring::multiply(uint times) const
         return bytestring();
     else if (times == 1)
         return *this;
-    else
+    else // fast but memory inefficient technique
         return times & 0x1 ? *this + this->concat(*this).multiply(times / 2) : this->concat(*this).multiply(times / 2);
+}
+
+
+list<bytestring> bytestring::divide(uint times) const
+{
+    list<bytestring> result;
+    int length = this->i_length / times;
+    for (uint i = 0; i < times; i++)
+        result.push(new bytestring(this->substring(i * length, (i + 1) * length - 1)));
+    return result;
+}
+
+list<bytestring> bytestring::split(char c) const
+{
+    list<bytestring> result;
+    int offset = 0;
+    int start = this->find(c, offset);
+    while (start >= 0)
+    {
+        result.push(new bytestring(this->substring(offset, start - 1)));
+        offset = start + 1;
+        start = this->find(c, offset);
+    }
+    result.push(new bytestring(this->substring(offset, this->length() - 1)));
+    return result;
+}
+
+list<bytestring> bytestring::split(const bytestring& delimiter) const
+{
+    list<bytestring> result;
+    int offset = 0;
+    int start = this->find(delimiter, offset);
+    while (start >= 0)
+    {
+        result.push(new bytestring(this->substring(offset, start - 1)));
+        offset = start + delimiter.length();
+        start = this->find(delimiter, offset);
+    }
+    result.push(new bytestring(this->substring(offset, this->length() - 1)));
+    return result;
+}
+
+bytestring bytestring::join(const list<bytestring>& strings) const
+{
+    if (strings.empty())
+        return bytestring();
+
+    uint lengths[strings.length() * 2 - 1];
+    const char* buffers[strings.length() * 2 - 1];
+
+    list<bytestring>::iterator iter = strings.begin(), iter_end = strings.end();
+    lengths[0] = (*iter).length();
+    buffers[0] = (*iter).buffer();
+    int offset = 0;
+    for (++iter; iter != iter_end; ++iter, offset++)
+    {
+        lengths[offset * 2 + 1] = this->i_length;
+        lengths[offset * 2 + 2] = (*iter).length();
+        buffers[offset * 2 + 1] = this->a_buffer;
+        buffers[offset * 2 + 2] = (*iter).buffer();
+    }
+
+    return bytestring(strings.length() * 2 - 1, lengths, buffers);
 }
 
 

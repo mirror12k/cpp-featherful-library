@@ -54,6 +54,7 @@ public:
     iterator end() const;
 
     uint length() const;
+    bool empty() const;
 
     void push(T* item);
     void unshift(T* item);
@@ -247,6 +248,11 @@ uint list<T>::length() const
     return this->i_length;
 }
 
+template <class T>
+bool list<T>::empty() const
+{
+    return this->i_length == 0;
+}
 
 template <class T>
 void list<T>::push(T* item)

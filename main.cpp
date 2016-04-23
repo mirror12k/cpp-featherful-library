@@ -212,6 +212,9 @@ int main (int argc, char** argv)
 
     cout << "sum: " << list<bytestring>().map(bytestring_length).reduce(sum, 10) << endl;
 
+    cout << bytestring('-').join(bytestring("||").join(bytestring("asdf qwerty hello").split(' ')).split("||")).c_str() << endl;
+    cout << bytestring('-').join(bytestring("123456").divide(3)).c_str() << endl;
+
     return 0;
 }
 

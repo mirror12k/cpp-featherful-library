@@ -3,6 +3,8 @@
 
 typedef unsigned int uint;
 
+#include "list.hpp"
+
 namespace featherful
 {
 
@@ -52,10 +54,11 @@ public:
     bytestring splice(const bytestring& segment, int start, int end=-1) const;
 
     bytestring multiply(uint times) const;
-//    list<bytestring> divide(uint times) const;
+    list<bytestring> divide(uint times) const;
 
-//    list<bytestring> split(const bytestring& const delimiter) const;
-//    bytestring join(const list<bytestring>& strings) const;
+    list<bytestring> split(char c) const;
+    list<bytestring> split(const bytestring& delimiter) const;
+    bytestring join(const list<bytestring>& strings) const;
 
     char char_at(int index) const;
     bool contains(char c, uint offset=0) const;
