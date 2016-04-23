@@ -36,6 +36,9 @@ public:
     list<bytestring> operator/(uint times) const;
     list<bytestring> operator/(const bytestring& delimiter) const;
     bool operator==(const bytestring& other) const;
+    bool operator!=(const bytestring& other) const;
+    bool operator<(const bytestring& other) const;
+    bool operator<=(const bytestring& other) const;
 
 
     typedef const char* const_iterator;

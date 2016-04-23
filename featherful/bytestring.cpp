@@ -132,6 +132,21 @@ bool bytestring::operator==(const bytestring& other) const
     return this->equal(other);
 }
 
+bool bytestring::operator!=(const bytestring& other) const
+{
+    return ! this->equal(other);
+}
+
+bool bytestring::operator<(const bytestring& other) const
+{
+    return this->compare(other) < 0;
+}
+
+bool bytestring::operator<=(const bytestring& other) const
+{
+    return this->compare(other) <= 0;
+}
+
 
 
 
