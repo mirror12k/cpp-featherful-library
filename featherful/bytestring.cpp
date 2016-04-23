@@ -102,19 +102,29 @@ char bytestring::operator[](int index) const
     return this->char_at(index);
 }
 
-bytestring bytestring::operator+(const bytestring& other) const
+bytestring bytestring::operator+(const bytestring& appended) const
 {
-    return this->concat(other);
+    return this->concat(appended);
 }
 
-bytestring bytestring::operator-(const bytestring& other) const
+bytestring bytestring::operator-(const bytestring& removed) const
 {
-    return this->remove(other);
+    return this->remove(removed);
 }
 
 bytestring bytestring::operator*(uint times) const
 {
     return this->multiply(times);
+}
+
+list<bytestring> bytestring::operator/(uint times) const
+{
+    return this->divide(times);
+}
+
+list<bytestring> bytestring::operator/(const bytestring& delimiter) const
+{
+    return this->split(delimiter);
 }
 
 bool bytestring::operator==(const bytestring& other) const
@@ -149,6 +159,23 @@ bytestring bytestring::concat(const bytestring& other) const
     buffers[1] = other.buffer();
 
     return bytestring(2, lengths, buffers);
+}
+
+bytestring bytestring::concat(const list<bytestring>& strings) const
+{
+    uint lengths[strings.length() + 1];
+    const char* buffers[strings.length() + 1];
+
+    lengths[0] = this->length();
+    buffers[0] = this->buffer();
+    int offset = 1;
+    for (list<bytestring>::iterator iter = strings.begin(), iter_end = strings.end(); iter != iter_end; ++iter, offset++)
+    {
+        lengths[offset] = (*iter).length();
+        buffers[offset] = (*iter).buffer();
+    }
+
+    return bytestring(strings.length() + 1, lengths, buffers);
 }
 
 bytestring bytestring::substring(int start, int end) const

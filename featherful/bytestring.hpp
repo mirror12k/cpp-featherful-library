@@ -30,9 +30,11 @@ public:
     char* c_str() const;
 
     char operator[](int index) const;
-    bytestring operator+(const bytestring& other) const;
-    bytestring operator-(const bytestring& other) const;
+    bytestring operator+(const bytestring& appended) const;
+    bytestring operator-(const bytestring& removed) const;
     bytestring operator*(uint times) const;
+    list<bytestring> operator/(uint times) const;
+    list<bytestring> operator/(const bytestring& delimiter) const;
     bool operator==(const bytestring& other) const;
 
 
@@ -42,6 +44,7 @@ public:
     const_iterator end() const;
 
     bytestring concat(const bytestring& other) const;
+    bytestring concat(const list<bytestring>& strings) const;
     bytestring substring(int start, int end=-1) const;
     bytestring strip(char c) const;
     bytestring strip(const bytestring& chars) const;
