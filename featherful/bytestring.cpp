@@ -1,5 +1,6 @@
 
 #include "bytestring.hpp"
+#include "exception.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -22,9 +23,7 @@ bytestring::bytestring(const char* s) : bytestring(strlen(s), s) {}
 
 bytestring::bytestring(uint length, const char* s)
 {
-    char* allocated = (char*)malloc(length);
-    if (allocated == nullptr)
-        throw exception();
+    char* allocated = new char[length];
 
     memcpy(allocated, s, length);
     this->i_length = length;
@@ -37,9 +36,7 @@ bytestring::bytestring(uint string_count, uint* length, const char** s)
     for (uint i = 0; i < string_count; i++)
         total_length += length[i];
 
-    char* allocated = (char*)malloc(total_length);
-    if (allocated == nullptr)
-        throw exception();
+    char* allocated = new char[total_length];
 
     uint offset = 0;
     for (uint i = 0; i < string_count; i++)
@@ -59,9 +56,7 @@ bytestring& bytestring::operator=(const bytestring& other)
     free((void*)this->a_buffer);
 
     this->i_length = other.length();
-    char* allocated = (char*)malloc(this->i_length);
-    if (allocated == nullptr)
-        throw exception();
+    char* allocated = new char[this->i_length];
     memcpy(allocated, other.buffer(), this->i_length);
     this->a_buffer = allocated;
 
@@ -88,9 +83,7 @@ const char* bytestring::buffer() const
 
 char* bytestring::c_str() const
 {
-    char* str = (char*)malloc(this->i_length + 1);
-    if (str == nullptr)
-        throw exception();
+    char* str = new char[this->i_length + 1];
     memcpy(str, this->a_buffer, this->i_length);
     str[this->i_length] = '\0';
     return str;
@@ -178,8 +171,8 @@ bytestring bytestring::concat(const bytestring& other) const
 
 bytestring bytestring::concat(const list<bytestring>& strings) const
 {
-    uint lengths[strings.length() + 1];
-    const char* buffers[strings.length() + 1];
+    uint* lengths = new uint[strings.length() + 1];
+    const char** buffers = new const char*[strings.length() + 1];
 
     lengths[0] = this->length();
     buffers[0] = this->buffer();
@@ -190,7 +183,10 @@ bytestring bytestring::concat(const list<bytestring>& strings) const
         buffers[offset] = (*iter).buffer();
     }
 
-    return bytestring(strings.length() + 1, lengths, buffers);
+    bytestring result(strings.length() + 1, lengths, buffers);
+    delete lengths;
+    delete buffers;
+    return result;
 }
 
 bytestring bytestring::substring(int start, int end) const
@@ -199,19 +195,19 @@ bytestring bytestring::substring(int start, int end) const
     {
         start = this->i_length + start;
         if (start < 0)
-            throw exception();
+            throw range_exception("negative start index too large in bytestring::substring", start);
     }
     else if (start >= this->i_length)
-        throw exception();
+        throw range_exception("start index too large in bytestring::substring", start);
 
     if (end < 0)
     {
         end = this->i_length + end;
         if (end < 0)
-            throw exception();
+            throw range_exception("negative end index too large in bytestring::substring", end);
     }
     else if (end >= this->i_length)
-        throw exception();
+        throw range_exception("end index too large in bytestring::substring", end);
 
     end++;
 
@@ -225,9 +221,7 @@ bytestring bytestring::substring(int start, int end) const
 bytestring bytestring::strip(char c) const
 {
     uint stripped_offset = 0;
-    char* stripped_buffer = (char*)malloc(this->i_length);
-    if (stripped_buffer == nullptr)
-        throw exception();
+    char* stripped_buffer = new char[this->i_length];
 
     for (bytestring::const_iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; iter++)
         if (*iter != c)
@@ -260,10 +254,10 @@ bytestring bytestring::insert(const bytestring& other, int offset) const
     {
         offset = this->i_length + offset + 1;
         if (offset < 0)
-            throw exception();
+            throw range_exception("negative offset index too large in bytestring::insert", offset);
     }
     if (offset > this->i_length)
-        throw exception();
+        throw range_exception("offset index too large in bytestring::insert", offset);
 
     uint lengths[3];
     const char* buffers[3];
@@ -285,24 +279,24 @@ bytestring bytestring::erase(int start, int end) const
     {
         start = this->i_length + start;
         if (start < 0)
-            throw exception();
+            throw range_exception("negative start index too large in bytestring::erase", start);
     }
     else if (start >= this->i_length)
-        throw exception();
+        throw range_exception("start index too large in bytestring::erase", start);
 
     if (end < 0)
     {
         end = this->i_length + end;
         if (end < 0)
-            throw exception();
+            throw range_exception("negative end index too large in bytestring::erase", end);
     }
     else if (end >= this->i_length)
-        throw exception();
+        throw range_exception("end index too large in bytestring::erase", end);
 
     end++;
 
     if (start > end)
-        throw exception();
+        throw range_exception("start index greater than end index in bytestring::erase", start, end);
 
     uint lengths[2];
     const char* buffers[2];
@@ -346,24 +340,24 @@ bytestring bytestring::splice(const bytestring& segment, int start, int end) con
     {
         start = this->i_length + start;
         if (start < 0)
-            throw exception();
+            throw range_exception("negative start index too large in bytestring::splice", start);
     }
     else if (start >= this->i_length)
-        throw exception();
+        throw range_exception("start index too large in bytestring::splice", start);
 
     if (end < 0)
     {
         end = this->i_length + end;
         if (end < 0)
-            throw exception();
+            throw range_exception("negative end index too large in bytestring::splice", end);
     }
     else if (end >= this->i_length)
-        throw exception();
+        throw range_exception("end index too large in bytestring::splice", end);
 
     end++;
 
     if (start > end)
-        throw exception();
+        throw range_exception("start index larger than end index in bytestring::splice", start, end);
 
     uint lengths[3];
     const char* buffers[3];
@@ -437,8 +431,8 @@ bytestring bytestring::join(const list<bytestring>& strings) const
     if (strings.empty())
         return bytestring();
 
-    uint lengths[strings.length() * 2 - 1];
-    const char* buffers[strings.length() * 2 - 1];
+    uint* lengths = new uint[strings.length() * 2 - 1];
+    const char** buffers = new const char*[strings.length() * 2 - 1];
 
     list<bytestring>::iterator iter = strings.begin(), iter_end = strings.end();
     lengths[0] = (*iter).length();
@@ -452,7 +446,10 @@ bytestring bytestring::join(const list<bytestring>& strings) const
         buffers[offset * 2 + 2] = (*iter).buffer();
     }
 
-    return bytestring(strings.length() * 2 - 1, lengths, buffers);
+    bytestring result(strings.length() * 2 - 1, lengths, buffers);
+    delete lengths;
+    delete buffers;
+    return result;
 }
 
 
@@ -460,9 +457,9 @@ bytestring bytestring::join(const list<bytestring>& strings) const
 char bytestring::char_at(int index) const
 {
     if (index < 0)
-        throw exception();
+        throw range_exception("negative index too large in bytestring::char_at", index);
     else if (index >= this->i_length)
-        throw exception();
+        throw range_exception("index too large in bytestring::char_at", index);
     else
         return this->a_buffer[index];
 }
@@ -488,7 +485,7 @@ int bytestring::find(char c, uint offset) const
 int bytestring::find(const bytestring& needle, uint offset) const
 {
     if (needle.length() == 0)
-        throw exception();
+        throw invalid_exception("bytestring::find called with 0 length needle");
     if (needle.length() > this->length())
         return -1;
 

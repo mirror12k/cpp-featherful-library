@@ -107,10 +107,10 @@ public:
         bool operator==(const list_link& other) const;
         list_link& operator++();
         list_link& operator--();
-        list_link& operator++(int);
-        list_link& operator--(int);
-        list_link& operator+(int amount);
-        list_link& operator-(int amount);
+        list_link operator++(int);
+        list_link operator--(int);
+        list_link operator+(int amount);
+        list_link operator-(int amount);
 
         T* p_item;
         list_link* p_prev;
@@ -605,21 +605,21 @@ typename list<T>::list_link& list<T>::list_link::operator--()
     return *this;
 }
 template <class T>
-typename list<T>::list_link& list<T>::list_link::operator++(int)
+typename list<T>::list_link list<T>::list_link::operator++(int)
 {
     list<T>::list_link link = *this;
     *this = *this->p_next;
     return link;
 }
 template <class T>
-typename list<T>::list_link& list<T>::list_link::operator--(int)
+typename list<T>::list_link list<T>::list_link::operator--(int)
 {
     list<T>::list_link link = *this;
     *this = *this->p_prev;
     return link;
 }
 template <class T>
-typename list<T>::list_link& list<T>::list_link::operator+(int amount)
+typename list<T>::list_link list<T>::list_link::operator+(int amount)
 {
     list<T>::list_link link = *this;
     if (amount > 0)
@@ -631,7 +631,7 @@ typename list<T>::list_link& list<T>::list_link::operator+(int amount)
     return link;
 }
 template <class T>
-typename list<T>::list_link& list<T>::list_link::operator-(int amount)
+typename list<T>::list_link list<T>::list_link::operator-(int amount)
 {
     list<T>::list_link link = *this;
     if (amount > 0)
