@@ -457,33 +457,55 @@ bytestring bytestring::join(const list<bytestring>& strings) const
 char bytestring::char_at(int index) const
 {
     if (index < 0)
-        throw range_exception("negative index too large in bytestring::char_at", index);
+    {
+        index = index + this->i_length;
+        if (index < 0)
+            throw range_exception("negative index too large in bytestring::char_at", index);
+    }
     else if (index >= this->i_length)
         throw range_exception("index too large in bytestring::char_at", index);
-    else
-        return this->a_buffer[index];
+
+    return this->a_buffer[index];
 }
 
-bool bytestring::contains(char c, uint offset) const
+bool bytestring::contains(char c, int offset) const
 {
     return this->find(c, offset) >= 0;
 }
 
-bool bytestring::contains(const bytestring& needle, uint offset) const
+bool bytestring::contains(const bytestring& needle, int offset) const
 {
     return this->find(needle, offset) >= 0;
 }
 
-int bytestring::find(char c, uint offset) const
+int bytestring::find(char c, int offset) const
 {
+    if (offset < 0)
+    {
+        offset = offset + this->i_length;
+        if (offset < 0)
+            throw range_exception("negative offset too large in bytestring::find", offset);
+    }
+    else if (offset >= this->i_length)
+        throw range_exception("offset too large in bytestring::find", offset);
+
     for (bytestring::const_iterator iter = this->begin() + offset, iter_end = this->end(); iter < iter_end; iter++)
         if (*iter == c)
             return iter - this->begin();
     return -1;
 }
 
-int bytestring::find(const bytestring& needle, uint offset) const
+int bytestring::find(const bytestring& needle, int offset) const
 {
+    if (offset < 0)
+    {
+        offset = offset + this->i_length;
+        if (offset < 0)
+            throw range_exception("negative offset too large in bytestring::find", offset);
+    }
+    else if (offset >= this->i_length)
+        throw range_exception("offset too large in bytestring::find", offset);
+
     if (needle.length() == 0)
         throw invalid_exception("bytestring::find called with 0 length needle");
     if (needle.length() > this->length())

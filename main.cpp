@@ -216,6 +216,8 @@ int main (int argc, char** argv)
     cout << bytestring('-').join(bytestring("123456").divide(3)).c_str() << endl;
     cout << bytestring("words: ").concat(bytestring("welcome to hell") / bytestring('e')).c_str() << endl;
 
+    cout << "debug: " << bytestring("asdf")[-5] << endl;
+
     return 0;
 }
 

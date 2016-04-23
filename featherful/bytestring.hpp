@@ -67,10 +67,10 @@ public:
     bytestring join(const list<bytestring>& strings) const;
 
     char char_at(int index) const;
-    bool contains(char c, uint offset=0) const;
-    bool contains(const bytestring& needle, uint offset=0) const;
-    int find(char c, uint offset=0) const;
-    int find(const bytestring& needle, uint offset=0) const;
+    bool contains(char c, int offset=0) const;
+    bool contains(const bytestring& needle, int offset=0) const;
+    int find(char c, int offset=0) const;
+    int find(const bytestring& needle, int offset=0) const;
 
     bool equal(const bytestring& other) const;
     int compare(const bytestring& other) const;
