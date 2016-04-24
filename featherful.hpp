@@ -1,6 +1,7 @@
 
 #pragma once
 
+typedef unsigned int uint;
 
 #include "featherful/debug.hpp"
 #include "featherful/assert.hpp"

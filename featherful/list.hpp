@@ -1,6 +1,11 @@
 
 #pragma once
 
+
+#include "exception.hpp"
+
+typedef unsigned int uint;
+
 namespace featherful
 {
 
@@ -40,7 +45,7 @@ public:
     ~list();
 
     list<T>& operator=(list<T> other);
-    T& operator[](uint index);
+    T& operator[](int index);
     list<T>& operator+(list<T>& other);
     list<T>& operator+(list<T>&& other);
     list<T>& operator+=(list<T>& other);
@@ -60,7 +65,7 @@ public:
     void unshift(T* item);
     T pop();
     T shift();
-    T& at(uint index) const;
+    T& at(int index) const;
 
     void copy(const list<T>& other);
     list<T> clone();
@@ -68,6 +73,10 @@ public:
     list<T>& concat(list<T>&& other);
     list<T>& concat(list<list<T>>& other);
     list<T>& concat(list<list<T>>&& other);
+
+    // list<T> slice(int start, int end) const;
+    // list<T> slice_inplace(int start, int end);
+    // list<T> splice(list<T> items, int start, int end);
 
     template <class K>
     list<K> map(list_mapper<T, K>& mapper) const;
@@ -158,7 +167,7 @@ list<T>& list<T>::operator=(list<T> other)
 }
 
 template <class T>
-T& list<T>::operator[](uint index)
+T& list<T>::operator[](int index)
 {
     return this->at(index);
 }
@@ -299,12 +308,18 @@ T list<T>::shift()
 }
 
 template <class T>
-T& list<T>::at(uint index) const
+T& list<T>::at(int index) const
 {
-    if (index >= this->i_length)
-        throw "death";
-    else
-        return *(this->begin() + index);
+    if (index < 0)
+    {
+        index += this->i_length;
+        if (index < 0)
+            throw range_exception("negative list index out of bounds in list::at", index);
+    }
+    else if (index >= this->i_length)
+        throw range_exception("list index out of bounds in list::at", index);
+
+    return *(this->begin() + index);
 }
 
 

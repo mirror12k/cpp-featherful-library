@@ -1,7 +1,6 @@
 
 #pragma once
 
-typedef unsigned int uint;
 
 #include "list.hpp"
 

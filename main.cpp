@@ -12,6 +12,8 @@ using featherful::bytestring;
 using featherful::list;
 
 
+#include "featherful_tests/test_list.hpp"
+
 
 class string_mapper : public featherful::list_mapper<bytestring, bytestring>
 {
@@ -223,12 +225,14 @@ int main (int argc, char** argv)
 //    DEBUG("hello world! %d\n", 15);
 
 
-    featherful::test_results test1("test1");
-    TEST(test1, false);
-    TEST(test1, true);
-    TEST(test1, false);
-    TEST_THROW(test1, bytestring("asdf").find(""), featherful::invalid_exception);
-    test1.finish();
+//    featherful::test_results test1("test1");
+//    TEST(test1, false);
+//    TEST(test1, true);
+//    TEST(test1, false);
+//    TEST_THROW(test1, bytestring("asdf").find(""), featherful::invalid_exception);
+//    test1.finish();
+
+    test_list();
 
 
     return 0;
