@@ -443,6 +443,7 @@ list<T>& list<T>::filter_inplace(list_filterer<T>& filterer)
             link->p_next->p_prev = link->p_prev;
             link->p_prev->p_next = link->p_next;
             delete link->p_item;
+            this->i_length--;
         }
     return *this;
 }
@@ -456,6 +457,7 @@ list<T>& list<T>::filter_inplace(list_filterer<T>&& filterer)
             link->p_next->p_prev = link->p_prev;
             link->p_prev->p_next = link->p_next;
             delete link->p_item;
+            this->i_length--;
         }
     return *this;
 }
@@ -469,6 +471,7 @@ list<T>& list<T>::filter_inplace(bool (*filter_function)(const T&))
             link->p_next->p_prev = link->p_prev;
             link->p_prev->p_next = link->p_next;
             delete link->p_item;
+            this->i_length--;
         }
     return *this;
 }
