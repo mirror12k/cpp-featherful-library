@@ -220,7 +220,16 @@ int main (int argc, char** argv)
 //    cout << "debug: " << bytestring("asdf")[-5] << endl;
 
 //    DEBUG_ASSERT(bytestring("asdf").length() == 5, "test string");
-    DEBUG("hello world! %d\n", 15);
+//    DEBUG("hello world! %d\n", 15);
+
+
+    featherful::test_results test1("test1");
+    TEST(test1, false);
+    TEST(test1, true);
+    TEST(test1, false);
+    TEST_THROW(test1, bytestring("asdf").find(""), featherful::invalid_exception);
+    test1.finish();
+
 
     return 0;
 }

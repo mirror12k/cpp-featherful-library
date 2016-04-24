@@ -3,6 +3,9 @@
 
 #include "exception.hpp"
 
+namespace featherful
+{
+
 class assertion_exception : public exception
 {
 public:
@@ -17,7 +20,9 @@ private:
     const char* test_name;
 };
 
-#define ASSERT(X, ...) do { if (! (X)) throw assertion_exception(__FILE__, __LINE__, #X, ##__VA_ARGS__); } while (0)
+}
+
+#define ASSERT(X, ...) do { if (! (X)) throw featherful::assertion_exception(__FILE__, __LINE__, #X, ##__VA_ARGS__); } while (0)
 
 #ifdef ENABLE_DEBUG
 #define DEBUG_ASSERT(X, ...) ASSERT(X, ##__VA_ARGS__)
