@@ -14,7 +14,7 @@ public:
     range_exception(const char* reason, int index);
     range_exception(const char* reason, int index, int index2);
     const char* what() const noexcept;
-
+private:
     const char* reason;
     const int index;
     const int index2;
@@ -26,7 +26,7 @@ class invalid_exception : public exception
 public:
     invalid_exception(const char* reason);
     const char* what() const noexcept;
-
+private:
     const char* reason;
 };
 

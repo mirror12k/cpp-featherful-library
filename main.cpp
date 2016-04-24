@@ -5,6 +5,7 @@
 using std::cout;
 using std::endl;
 
+#define ENABLE_DEBUG
 #include "featherful.hpp"
 
 using featherful::bytestring;
@@ -216,7 +217,10 @@ int main (int argc, char** argv)
     cout << bytestring('-').join(bytestring("123456").divide(3)).c_str() << endl;
     cout << bytestring("words: ").concat(bytestring("welcome to hell") / bytestring('e')).c_str() << endl;
 
-    cout << "debug: " << bytestring("asdf")[-5] << endl;
+//    cout << "debug: " << bytestring("asdf")[-5] << endl;
+
+//    DEBUG_ASSERT(bytestring("asdf").length() == 5, "test string");
+    DEBUG("hello world! %d\n", 15);
 
     return 0;
 }
