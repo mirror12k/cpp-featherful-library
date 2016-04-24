@@ -52,6 +52,12 @@ bool test_basic()
 
     TEST(results, *(list2.begin() + 1) == 15);
     TEST(results, *(list2.begin() + 2) == 25);
+    TEST(results, list2.begin() + 3 != nullptr);
+    TEST_THROW(results, *(list2.begin() + 3), featherful::iterator_exception);
+    TEST(results, list2.begin() - 1 != nullptr);
+    TEST_THROW(results, *(list2.begin() - 1), featherful::iterator_exception);
+    TEST_THROW(results, list2.begin() - 2, featherful::iterator_exception);
+    TEST_THROW(results, list2.begin() + 4, featherful::iterator_exception);
     TEST(results, list2[1] == 15);
     TEST(results, list2[2] == 25);
     TEST(results, list2[0] == 5);

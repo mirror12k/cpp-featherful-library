@@ -67,6 +67,7 @@ public:
     T pop();
     T shift();
     T& at(int index) const;
+    iterator iterator_at(int index) const;
 
     void copy(const list<T>& other);
     list<T> clone();
@@ -160,7 +161,10 @@ list<T>::iterator::iterator(list_link* link) : link(link)
 template <class T>
 T& list<T>::iterator::operator*() const
 {
-    return *this->link->p_item;
+    if (this->link->p_item)
+        return *this->link->p_item;
+    else
+        throw iterator_exception("attempt to dereference head or tail iterator at list::iterator dereference");
 }
 template <class T>
 bool list<T>::iterator::operator!=(const iterator& other) const
@@ -178,7 +182,7 @@ template <class T>
 typename list<T>::iterator& list<T>::iterator::operator++()
 {
     if (this->link->p_next == nullptr)
-        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+        throw iterator_exception("list iterator out of bounds in list::iterator increment");
     this->link = this->link->p_next;
     return *this;
 }
@@ -187,7 +191,7 @@ template <class T>
 typename list<T>::iterator& list<T>::iterator::operator--()
 {
     if (this->link->p_prev == nullptr)
-        throw range_exception("list iterator out of bounds in list::iterator decrement", 0);
+        throw iterator_exception("list iterator out of bounds in list::iterator decrement");
     this->link = this->link->p_prev;
     return *this;
 }
@@ -196,7 +200,7 @@ template <class T>
 typename list<T>::iterator list<T>::iterator::operator++(int)
 {
     if (this->link->p_next == nullptr)
-        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+        throw iterator_exception("list iterator out of bounds in list::iterator increment");
     iterator result(*this);
     this->link = this->link->p_next;
     return result;
@@ -206,7 +210,7 @@ template <class T>
 typename list<T>::iterator list<T>::iterator::operator--(int)
 {
     if (this->link->p_prev == nullptr)
-        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+        throw iterator_exception("list iterator out of bounds in list::iterator increment");
     iterator result(*this);
     this->link = this->link->p_prev;
     return result;
@@ -221,13 +225,13 @@ typename list<T>::iterator list<T>::iterator::operator+(int amount)
             if (link->p_prev)
                 link = link->p_prev;
             else
-                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+                throw iterator_exception("list iterator out of bounds in list::iterator addition");
     else
         for (int i = 0; i < amount; i++)
             if (link->p_next)
                 link = link->p_next;
             else
-                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+                throw iterator_exception("list iterator out of bounds in list::iterator addition");
 
     return list<T>::iterator(link);
 }
@@ -241,13 +245,13 @@ typename list<T>::iterator list<T>::iterator::operator-(int amount)
             if (link->p_next)
                 link = link->p_next;
             else
-                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+                throw iterator_exception("list iterator out of bounds in list::iterator subtraction");
     else
         for (int i = 0; i < amount; i++)
             if (link->p_prev)
                 link = link->p_prev;
             else
-                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+                throw iterator_exception("list iterator out of bounds in list::iterator subtraction");
 
     return list<T>::iterator(link);
 }
@@ -440,6 +444,20 @@ T& list<T>::at(int index) const
         throw range_exception("list index out of bounds in list::at", index);
 
     return *(this->begin() + index);
+}
+template <class T>
+typename list<T>::iterator list<T>::iterator_at(int index) const
+{
+    if (index < 0)
+    {
+        index += this->i_length;
+        if (index < 0)
+            throw range_exception("negative list index out of bounds in list::at", index);
+    }
+    else if (index >= this->i_length)
+        throw range_exception("list index out of bounds in list::at", index);
+
+    return this->begin() + index;
 }
 
 

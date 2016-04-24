@@ -6,27 +6,62 @@
 namespace featherful
 {
 
-range_exception::range_exception(const char* reason, int index) : reason(reason), index(index), index2(0), is_double_index(false)
-{}
-range_exception::range_exception(const char* reason, int index, int index2) : reason(reason), index(index), index2(index2), is_double_index(true)
-{}
+range_exception::range_exception(const char* reason, int index)
+{
+    char* buffer = new char[2048];
+    snprintf(buffer, 2048, "range exception: '%s' : %d", reason, index);
+    this->msg = buffer;
+}
+range_exception::range_exception(const char* reason, int index, int index2)
+{
+    char* buffer = new char[2048];
+    snprintf(buffer, 2048, "range exception: '%s' : %d, %d", reason, index, index2);
+    this->msg = buffer;
+}
+
+range_exception::~range_exception()
+{
+    delete this->msg;
+}
 
 const char* range_exception::what() const noexcept
 {
-    char* buffer = new char[512];
-    if (this->is_double_index)
-        snprintf(buffer, 512, "range exception: '%s' : %d, %d", this->reason, this->index, this->index2);
-    else
-        snprintf(buffer, 512, "range exception: '%s' : %d", this->reason, this->index);
-    return buffer;
+    return this->msg;
 }
 
 
-invalid_exception::invalid_exception(const char* reason) : reason(reason)
-{}
+invalid_exception::invalid_exception(const char* reason)
+{
+    char* buffer = new char[2048];
+    snprintf(buffer, 2048, "invalid exception: '%s'", reason);
+    this->msg = buffer;
+}
+
+invalid_exception::~invalid_exception()
+{
+    delete this->msg;
+}
+
 const char* invalid_exception::what() const noexcept
 {
-    return this->reason;
+    return this->msg;
+}
+
+iterator_exception::iterator_exception(const char* reason)
+{
+    char* buffer = new char[2048];
+    snprintf(buffer, 2048, "iterator exception: '%s'", reason);
+    this->msg = buffer;
+}
+
+iterator_exception::~iterator_exception()
+{
+    delete this->msg;
+}
+
+const char* iterator_exception::what() const noexcept
+{
+    return this->msg;
 }
 
 }
