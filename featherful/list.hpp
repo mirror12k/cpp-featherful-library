@@ -38,7 +38,8 @@ class list
 public:
 
     class list_link;
-    typedef list_link iterator;
+    class iterator;
+//    typedef list_link iterator;
 
     list();
     list(const list<T>& other);
@@ -121,20 +122,27 @@ public:
     public:
         list_link(list_link* prev, T* item, list_link* next);
 
-        T& operator*() const;
-        list_link& operator=(const list_link& other);
-        bool operator!=(const list_link& other) const;
-        bool operator==(const list_link& other) const;
-        list_link& operator++();
-        list_link& operator--();
-        list_link operator++(int);
-        list_link operator--(int);
-        list_link operator+(int amount);
-        list_link operator-(int amount);
-
         T* p_item;
         list_link* p_prev;
         list_link* p_next;
+    };
+
+    class iterator
+    {
+    public:
+        iterator(list_link* link);
+
+        T& operator*() const;
+        bool operator!=(const iterator& other) const;
+        bool operator==(const iterator& other) const;
+        iterator& operator++();
+        iterator& operator--();
+        iterator operator++(int);
+        iterator operator--(int);
+        iterator operator+(int amount);
+        iterator operator-(int amount);
+
+        list_link* link;
     };
 
 private:
@@ -143,6 +151,107 @@ private:
 
     uint i_length = 0;
 };
+
+
+template <class T>
+list<T>::iterator::iterator(list_link* link) : link(link)
+{}
+
+template <class T>
+T& list<T>::iterator::operator*() const
+{
+    return *this->link->p_item;
+}
+template <class T>
+bool list<T>::iterator::operator!=(const iterator& other) const
+{
+    return this->link != other.link;
+}
+
+template <class T>
+bool list<T>::iterator::operator==(const iterator& other) const
+{
+    return this->link == other.link;
+}
+
+template <class T>
+typename list<T>::iterator& list<T>::iterator::operator++()
+{
+    if (this->link->p_next == nullptr)
+        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+    this->link = this->link->p_next;
+    return *this;
+}
+
+template <class T>
+typename list<T>::iterator& list<T>::iterator::operator--()
+{
+    if (this->link->p_prev == nullptr)
+        throw range_exception("list iterator out of bounds in list::iterator decrement", 0);
+    this->link = this->link->p_prev;
+    return *this;
+}
+
+template <class T>
+typename list<T>::iterator list<T>::iterator::operator++(int)
+{
+    if (this->link->p_next == nullptr)
+        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+    iterator result(*this);
+    this->link = this->link->p_next;
+    return result;
+}
+
+template <class T>
+typename list<T>::iterator list<T>::iterator::operator--(int)
+{
+    if (this->link->p_prev == nullptr)
+        throw range_exception("list iterator out of bounds in list::iterator increment", 0);
+    iterator result(*this);
+    this->link = this->link->p_prev;
+    return result;
+}
+
+template <class T>
+typename list<T>::iterator list<T>::iterator::operator+(int amount)
+{
+    list_link* link = this->link;
+    if (amount < 0)
+        for (int i = 0; i > amount; i--)
+            if (link->p_prev)
+                link = link->p_prev;
+            else
+                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+    else
+        for (int i = 0; i < amount; i++)
+            if (link->p_next)
+                link = link->p_next;
+            else
+                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+
+    return list<T>::iterator(link);
+}
+
+template <class T>
+typename list<T>::iterator list<T>::iterator::operator-(int amount)
+{
+    list_link* link = this->link;
+    if (amount < 0)
+        for (int i = 0; i > amount; i--)
+            if (link->p_next)
+                link = link->p_next;
+            else
+                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+    else
+        for (int i = 0; i < amount; i++)
+            if (link->p_prev)
+                link = link->p_prev;
+            else
+                throw range_exception("list iterator out of bounds in list::iterator addition", 0);
+
+    return list<T>::iterator(link);
+}
+
 
 
 template <class T>
@@ -220,10 +329,10 @@ void list<T>::init_empty()
 template <class T>
 void list<T>::destroy()
 {
-    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
-        delete iter.p_item;
     for (list_link* link = this->p_head_link, *next = link->p_next; link != nullptr; link = next)
     {
+        if (link->p_item)
+            delete link->p_item;
         next = link->p_next;
         delete link;
     }
@@ -252,13 +361,13 @@ void list<T>::pilfer_links(list_link* start, list_link* end, uint* length)
 template <class T>
 typename list<T>::iterator list<T>::begin() const
 {
-    return *this->p_head_link->p_next;
+    return iterator(this->p_head_link->p_next);
 }
 
 template <class T>
 typename list<T>::iterator list<T>::end() const
 {
-    return *this->p_tail_link;
+    return iterator(this->p_tail_link);
 }
 
 
@@ -682,80 +791,6 @@ list<T>::list_link::list_link(list_link* prev, T* item, list_link* next)
     this->p_item = item;
     this->p_prev = prev;
     this->p_next = next;
-}
-
-template <class T>
-T& list<T>::list_link::operator*() const
-{
-    return *this->p_item;
-}
-template <class T>
-typename list<T>::list_link& list<T>::list_link::operator=(const list<T>::list_link& other)
-{
-    this->p_item = other.p_item;
-    this->p_prev = other.p_prev;
-    this->p_next = other.p_next;
-    return *this;
-}
-template <class T>
-bool list<T>::list_link::operator!=(const list_link& other) const
-{
-    return other.p_item != this->p_item;
-}
-template <class T>
-bool list<T>::list_link::operator==(const list_link& other) const
-{
-    return other.p_item == this->p_item;
-}
-template <class T>
-typename list<T>::list_link& list<T>::list_link::operator++()
-{
-    *this = *this->p_next;
-    return *this;
-}
-template <class T>
-typename list<T>::list_link& list<T>::list_link::operator--()
-{
-    *this = *this->p_prev;
-    return *this;
-}
-template <class T>
-typename list<T>::list_link list<T>::list_link::operator++(int)
-{
-    list<T>::list_link link = *this;
-    *this = *this->p_next;
-    return link;
-}
-template <class T>
-typename list<T>::list_link list<T>::list_link::operator--(int)
-{
-    list<T>::list_link link = *this;
-    *this = *this->p_prev;
-    return link;
-}
-template <class T>
-typename list<T>::list_link list<T>::list_link::operator+(int amount)
-{
-    list<T>::list_link link = *this;
-    if (amount > 0)
-        for (int i = 0; i < amount; i++)
-            link = *link.p_next;
-    else
-        for (int i = 0; i > amount; i--)
-            link = *link.p_prev;
-    return link;
-}
-template <class T>
-typename list<T>::list_link list<T>::list_link::operator-(int amount)
-{
-    list<T>::list_link link = *this;
-    if (amount > 0)
-        for (int i = 0; i < amount; i++)
-            link = *link.p_prev;
-    else
-        for (int i = 0; i > amount; i--)
-            link = *link.p_next;
-    return link;
 }
 
 
