@@ -14,6 +14,7 @@ bool test_list()
     list_tests.result(test_basic());
     list_tests.result(test_map());
     list_tests.result(test_filter());
+    list_tests.result(test_reduce());
 
     list_tests.finish();
     return list_tests.is_successful();
@@ -88,19 +89,6 @@ private:
     const int amount;
 };
 
-class int_selector : public featherful::list_filterer<int>
-{
-public:
-    int_selector(int amount) : amount(amount)
-    {}
-    bool filter(const int& val)
-    {
-        return val > this->amount;
-    }
-private:
-    const int amount;
-};
-
 bool test_map()
 {
     test_results results("list mapping tests");
@@ -142,6 +130,19 @@ bool test_map()
     return results.is_successful();
 }
 
+class int_selector : public featherful::list_filterer<int>
+{
+public:
+    int_selector(int amount) : amount(amount)
+    {}
+    bool filter(const int& val)
+    {
+        return val > this->amount;
+    }
+private:
+    const int amount;
+};
+
 
 bool test_filter()
 {
@@ -180,7 +181,48 @@ bool test_filter()
     return results.is_successful();
 }
 
+int reduce_sum(const int& a, const int& b)
+{
+    return a + b;
+}
 
+class counter_reducer : public featherful::list_reducer<int, int>
+{
+public:
+    void reduce(const int& val)
+    {
+        this->count++;
+    }
+    int produce()
+    {
+        return this->count;
+    }
+private:
+    int count = 0;
+};
 
+bool test_reduce()
+{
+    test_results results("list reducing tests");
 
+    list<int> list1;
+    list1.push(new int(1));
+    list1.push(new int(2));
+    list1.push(new int(3));
+    list1.push(new int(5));
+
+    TEST(results, list1.reduce(reduce_sum) == 11);
+    TEST(results, list1.reduce(counter_reducer()) == 4);
+    list1.push(new int(7));
+    TEST(results, list1.reduce(reduce_sum) == 18);
+    TEST(results, list1.reduce(counter_reducer()) == 5);
+    list1.pop();
+    list1.shift();
+    TEST(results, list1.reduce(reduce_sum) == 10);
+    TEST(results, list1.reduce(counter_reducer()) == 3);
+
+    results.finish();
+
+    return results.is_successful();
+}
 
