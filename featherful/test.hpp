@@ -27,6 +27,7 @@ private:
 
 #define TEST(RESULTS, CODE) do { if (CODE) { TEST_RESULT(RESULTS, true, #CODE); } else { TEST_RESULT(RESULTS, false, #CODE); } } while (0)
 #define TEST_THROW(RESULTS, CODE, EXCEPT) do { try { CODE; TEST_RESULT(RESULTS, false, #CODE); } catch (const EXCEPT& e) { TEST_RESULT(RESULTS, true, #CODE); } } while (0)
+#define TEST_NO_THROW(RESULTS, CODE, EXCEPT) do { try { CODE; TEST_RESULT(RESULTS, true, #CODE); } catch (const EXCEPT& e) { TEST_RESULT(RESULTS, false, #CODE); } } while (0)
 
 
 }
