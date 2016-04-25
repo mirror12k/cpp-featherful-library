@@ -33,6 +33,11 @@ bool test_bytestring_basic()
     TEST(results, bytestring("asdf").substring(2) == bytestring("df"));
     TEST(results, bytestring("asdf").substring(-3, -2) == bytestring("sd"));
     TEST(results, bytestring("asdf").substring(0, -3) == bytestring("as"));
+    TEST(results, bytestring("asdf").substring(3, 1) == bytestring(""));
+    TEST_THROW(results, bytestring("asdf").substring(5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").substring(-5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").substring(0, 15) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").substring(0, -15) == bytestring(""), featherful::range_exception);
 
     TEST(results, bytestring("asdf").concat("ghjk") == bytestring("asdfghjk"));
     TEST(results, bytestring("asdf").concat("ghjk").substring(2,5) == bytestring("dfgh"));
@@ -60,22 +65,35 @@ bool test_bytestring_insert()
     TEST(results, bytestring("asdf").insert("qwer") == bytestring("asdfqwer"));
     TEST(results, bytestring("asdf").insert("qwer", 2) == bytestring("asqwerdf"));
     TEST(results, bytestring("asdf").insert("qwer", 0) == bytestring("qwerasdf"));
+    TEST(results, bytestring("asdf").insert("qwer", -2) == bytestring("asdqwerf"));
+    TEST_THROW(results, bytestring("asdf").insert("qwer", 15) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").insert("qwer", -15) == bytestring(""), featherful::range_exception);
 
     TEST(results, bytestring("asdf").erase(0, 1) == bytestring("df"));
     TEST(results, bytestring("asdf").erase(1, 2) == bytestring("af"));
     TEST(results, bytestring("asdf").erase(3) == bytestring("asd"));
     TEST(results, bytestring("asdf").erase(-2) == bytestring("as"));
+    TEST_THROW(results, bytestring("asdf").erase(-15) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").erase(15) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").erase(0, -5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").erase(0, 5) == bytestring(""), featherful::range_exception);
 
     TEST(results, bytestring("hello hello therello").remove("el") == bytestring("hlo hlo therlo"));
     TEST(results, bytestring("hello hello therello").remove("hell") == bytestring("o o therello"));
     TEST(results, bytestring("hello hello therello").remove("llo ") == bytestring("hehetherello"));
+    TEST_THROW(results, bytestring("asdf").remove("") == bytestring(""), featherful::invalid_exception);
 
     TEST(results, bytestring("hello hello therello").replace("hello", "goodbye") == bytestring("goodbye goodbye therello"));
     TEST(results, bytestring("hello hello therello").replace("ello", "") == bytestring("h h ther"));
+    TEST_THROW(results, bytestring("asdf").replace("", "asdf") == bytestring(""), featherful::invalid_exception);
 
     TEST(results, bytestring("hello world!").splice("goodbye", 0, 4) == bytestring("goodbye world!"));
     TEST(results, bytestring("hello world!").splice("olleh", -6, -2) == bytestring("hello olleh!"));
     TEST(results, bytestring("hello world!").splice("everyone", 6) == bytestring("hello everyone"));
+    TEST_THROW(results, bytestring("asdf").splice("asdf", 5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").splice("asdf", 0, 5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").splice("asdf", 0, -5) == bytestring(""), featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").splice("asdf", -5, 1) == bytestring(""), featherful::range_exception);
 
     results.finish();
     return results.is_successful();
@@ -112,6 +130,8 @@ bool test_bytestring_search()
     TEST(results, bytestring("foo bar baz").find("ba", 9) == -1);
     TEST(results, bytestring("foo bar baz").find("az", -2) == 9);
     TEST(results, bytestring("foo bar baz").find("ar", -2) == -1);
+    TEST_THROW(results, bytestring("asdf").find("asdf", -5) == -1, featherful::range_exception);
+    TEST_THROW(results, bytestring("asdf").find("asdf", 5) == -1, featherful::range_exception);
 
     strings = bytestring("foo bar baz").split(' ');
     TEST(results, strings.length() == 3);
@@ -130,14 +150,20 @@ bool test_bytestring_search()
     TEST(results, bytestring("foo bar baz").contains("foo bravo") == false);
     TEST(results, bytestring("foo bar baz").contains("baz") == true);
     TEST(results, bytestring("foo bar baz").contains("bazz") == false);
+    TEST(results, bytestring("foo bar baz").contains("foo bar bazz") == false);
 
 
     TEST(results, bytestring("asdf").compare("as") == -1);
-    TEST(results, bytestring("asdf") < "as" == true);
+    TEST(results, bytestring("asdf").compare("as") == -1);
     TEST(results, bytestring("asdf").compare("asz") == -1);
     TEST(results, bytestring("asdf").compare("asa") == 1);
     TEST(results, bytestring("asdf").compare("dddd") == -1);
     TEST(results, bytestring("asdf").compare("asdf") == 0);
+
+
+    TEST(results, bytestring("asdf").empty() == false);
+    TEST(results, bytestring("").empty() == true);
+    TEST(results, (bytestring("") + "qwerty").empty() == false);
 
     results.finish();
     return results.is_successful();
