@@ -15,6 +15,7 @@ bool test_list()
     list_tests.result(test_map());
     list_tests.result(test_filter());
     list_tests.result(test_reduce());
+    list_tests.result(test_copy());
 
     list_tests.finish();
     return list_tests.is_successful();
@@ -24,7 +25,7 @@ bool test_list()
 bool test_basic()
 {
 
-    test_results results("basic list tests");
+    test_results results("list basic tests");
 
     list<int> list1;
     list1.push(new int(5));
@@ -236,4 +237,63 @@ bool test_reduce()
 
     return results.is_successful();
 }
+
+bool test_copy()
+{
+    test_results results("list copying tests");
+
+    list<int> list1;
+    list1.push(new int(0));
+    list1.push(new int(1));
+    list1.push(new int(2));
+    list1.push(new int(3));
+    list1.push(new int(4));
+    list1.push(new int(5));
+    list1.push(new int(6));
+
+    TEST(results, list1.length() == 7);
+
+    list<int> list1coppied(list1);
+    TEST(results, list1coppied.length() == 7);
+    list1.pop();
+    list1.pop();
+    list1.pop();
+    TEST(results, list1.length() == 4);
+    TEST(results, list1coppied.length() == 7);
+    TEST(results, list1coppied[1] == 1);
+    TEST(results, list1coppied[3] == 3);
+    TEST(results, list1coppied[5] == 5);
+
+    list1.concat(list1coppied);
+    TEST(results, list1.length() == 11);
+    TEST(results, list1coppied.length() == 0);
+    TEST(results, list1[4] == 0);
+
+    list1.slice_inplace(4);
+    TEST(results, list1.length() == 7);
+    TEST(results, list1[1] == 1);
+    TEST(results, list1[3] == 3);
+    TEST(results, list1[5] == 5);
+
+    list<int> list2;
+    list2.push(new int(3));
+    list2.push(new int(2));
+    list2.push(new int(1));
+    list1.splice(list2, 1, 3);
+    TEST(results, list1.length() == 7);
+    TEST(results, list1[0] == 0);
+    TEST(results, list1[1] == 3);
+    TEST(results, list1[2] == 2);
+    TEST(results, list1[3] == 1);
+    TEST(results, list1[4] == 4);
+    TEST(results, list1[5] == 5);
+
+    results.finish();
+
+    return results.is_successful();
+}
+
+
+
+
 

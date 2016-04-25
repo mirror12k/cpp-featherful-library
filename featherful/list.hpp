@@ -80,13 +80,13 @@ public:
     list<T>& concat(list<list<T>>&& other);
 
     list<T> slice(iterator start, iterator end);
-    list<T> slice(int start, int end);
+    list<T> slice(int start, int end=-1);
     list<T>& slice_inplace(iterator start, iterator end);
-    list<T>& slice_inplace(int start, int end);
+    list<T>& slice_inplace(int start, int end=-1);
     list<T>& splice(list<T>& items, iterator start, iterator end);
     list<T>& splice(list<T>&& items, iterator start, iterator end);
-    list<T>& splice(list<T>& items, int start, int end);
-    list<T>& splice(list<T>&& items, int start, int end);
+    list<T>& splice(list<T>& items, int start, int end=-1);
+    list<T>& splice(list<T>&& items, int start, int end=-1);
 
 
     template <class K>

@@ -234,11 +234,11 @@ int main (int argc, char** argv)
 
 
 
-    cout << "test: " << bytestring("+").join(bytestring("a-b-d-e-l-m").split("-").slice(4,5)).c_str() << endl;
-    cout << "test: " << bytestring("+").join(bytestring("a-b-d-e-l-m").split("-").splice(bytestring("a_b_c").split("_"), 0, -3)).c_str() << endl;
-    cout << "test: " << bytestring("a-b-d-e-l-m").split("-").splice(bytestring("a_b_c").split("_"), 0, -3).length() << endl;
+//    cout << "test: " << bytestring("+").join(bytestring("a-b-d-e-l-m").split("-").slice(4,5)).c_str() << endl;
+//    cout << "test: " << bytestring("+").join(bytestring("a-b-d-e-l-m").split("-").splice(bytestring("a_b_c").split("_"), 0, -3)).c_str() << endl;
+//    cout << "test: " << bytestring("a-b-d-e-l-m").split("-").splice(bytestring("a_b_c").split("_"), 0, -3).length() << endl;
 
-//    test_list();
+    test_list();
 
 
     return 0;
