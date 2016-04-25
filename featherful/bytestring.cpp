@@ -350,7 +350,10 @@ bytestring bytestring::replace(const bytestring& needle, const bytestring& repla
     while (offset != -1)
     {
         result = result.splice(replacement, offset, offset + needle.length() - 1);
-        offset = result.find(needle, offset + replacement.length());
+        offset += replacement.length();
+        if (offset == result.length())
+            return result;
+        offset = result.find(needle, offset);
     }
     return result;
 }
