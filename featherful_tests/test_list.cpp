@@ -64,8 +64,8 @@ bool test_basic()
     TEST(results, list2[-1] == 25);
     TEST(results, list2[-2] == 15);
     TEST(results, list2[-3] == 5);
-    TEST_THROW(results, list2[-4] == 0, featherful::range_exception);
-    TEST_THROW(results, list2[3] == 0, featherful::range_exception);
+    TEST_THROW(results, list2[-4], featherful::range_exception);
+    TEST_THROW(results, list2[3], featherful::range_exception);
 
 
     results.finish();
@@ -226,6 +226,11 @@ bool test_reduce()
     list1.shift();
     TEST(results, list1.reduce(reduce_sum) == 10);
     TEST(results, list1.reduce(counter_reducer()) == 3);
+
+
+    list<int> list2;
+    TEST_THROW(results, list2.reduce(reduce_sum), featherful::invalid_exception);
+    TEST(results, list2.reduce(reduce_sum, 5) == 5);
 
     results.finish();
 
