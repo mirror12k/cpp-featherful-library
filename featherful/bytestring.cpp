@@ -247,6 +247,27 @@ bytestring bytestring::strip_whitespace() const
     return this->strip(bytestring(" \t\r\n"));
 }
 
+bytestring bytestring::trim() const
+{
+    uint offsetleft = 0, offsetright = this->i_length - 1;
+    const char* buffer = this->a_buffer;
+
+    while (offsetleft <= offsetright && (buffer[offsetleft] == ' ' || buffer[offsetleft] == '\t' ||
+            buffer[offsetleft] == '\r' || buffer[offsetleft] == '\n'))
+    {
+        offsetleft++;
+    }
+    while (offsetleft <= offsetright && (buffer[offsetright] == ' ' || buffer[offsetright] == '\t' ||
+            buffer[offsetright] == '\r' || buffer[offsetright] == '\n'))
+    {
+        offsetright--;
+    }
+
+    if (offsetleft > offsetright)
+        return bytestring();
+    else
+        return this->substring(offsetleft, offsetright);
+}
 
 bytestring bytestring::insert(const bytestring& other, int offset) const
 {

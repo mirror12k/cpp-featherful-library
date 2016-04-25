@@ -51,6 +51,7 @@ public:
     bytestring strip(char c) const;
     bytestring strip(const bytestring& chars) const;
     bytestring strip_whitespace() const;
+    bytestring trim() const;
 
     bytestring insert(const bytestring& other, int offset=-1) const;
     bytestring erase(int start, int end=-1) const;

@@ -24,7 +24,6 @@ bool test_list()
 
 bool test_basic()
 {
-
     test_results results("list basic tests");
 
     list<int> list1;

@@ -13,6 +13,7 @@ using featherful::list;
 
 
 #include "featherful_tests/test_list.hpp"
+#include "featherful_tests/test_bytestring.hpp"
 
 
 class string_mapper : public featherful::list_mapper<bytestring, bytestring>
@@ -239,6 +240,7 @@ int main (int argc, char** argv)
 //    cout << "test: " << bytestring("a-b-d-e-l-m").split("-").splice(bytestring("a_b_c").split("_"), 0, -3).length() << endl;
 
     test_list();
+    test_bytestring();
 
 
     return 0;
