@@ -6,3 +6,4 @@ bool test_bytestring();
 
 bool test_bytestring_basic();
 bool test_bytestring_insert();
+bool test_bytestring_search();
