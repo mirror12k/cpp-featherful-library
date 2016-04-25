@@ -45,6 +45,7 @@ public:
 
     list();
     list(const list<T>& other);
+    list(list_link* start, list_link* end);
     ~list();
 
     list<T>& operator=(list<T> other);
@@ -78,9 +79,15 @@ public:
     list<T>& concat(list<list<T>>& other);
     list<T>& concat(list<list<T>>&& other);
 
-     list<T> slice(iterator start, iterator end) const;
-     list<T>& slice_inplace(iterator start, iterator end);
-     list<T> splice(const list<T>& items, iterator start, iterator end);
+    list<T> slice(iterator start, iterator end);
+    list<T> slice(int start, int end);
+    list<T>& slice_inplace(iterator start, iterator end);
+    list<T>& slice_inplace(int start, int end);
+    list<T>& splice(list<T>& items, iterator start, iterator end);
+    list<T>& splice(list<T>&& items, iterator start, iterator end);
+    list<T>& splice(list<T>& items, int start, int end);
+    list<T>& splice(list<T>&& items, int start, int end);
+
 
     template <class K>
     list<K> map(list_mapper<T, K>& mapper) const;
@@ -175,6 +182,23 @@ list<T>::list(const list<T>& other)
 //    printf("ctor list copy\n");
     this->init_empty();
     this->copy(other);
+}
+
+
+template <class T>
+list<T>::list(list_link* start, list_link* end)
+{
+//    printf("ctor list copy\n");
+    this->init_empty();
+    this->p_head_link->p_next = start;
+    start->p_prev = this->p_head_link;
+    this->p_tail_link->p_prev = end;
+    end->p_next = this->p_tail_link;
+
+    int length = 1;
+    for (list_link* iter = start; iter != end; iter = iter->p_next)
+        length++;
+    this->i_length = length;
 }
 
 template <class T>
@@ -357,7 +381,7 @@ typename list<T>::iterator list<T>::iterator_at(int index) const
         if (index + (int)this->i_length < 0)
             throw range_exception("negative list index out of bounds in list::iterator_at", index);
         else
-            return *(this->end() + index);
+            return this->end() + index;
     }
     else if (index >= this->i_length)
         throw range_exception("list index out of bounds in list::iterator_at", index);
@@ -365,6 +389,188 @@ typename list<T>::iterator list<T>::iterator_at(int index) const
     return this->begin() + index;
 }
 
+
+
+
+
+template <class T>
+void list<T>::copy(const list<T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    list_link* prev_link = this->p_head_link, *last_link = this->p_tail_link;
+    for (iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+    {
+        list_link* link = new list_link(prev_link, new T(*iter), last_link);
+        prev_link->p_next = link;
+        prev_link = link;
+        this->i_length++;
+    }
+    last_link->p_prev = prev_link;
+}
+
+template <class T>
+list<T> list<T>::clone()
+{
+    return list<T>(*this);
+}
+
+template <class T>
+list<T>& list<T>::concat(list<T>& other)
+{
+    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::concat(list<T>&& other)
+{
+    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::concat(list<list<T>>& other)
+{
+    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::concat(list<list<T>>&& other)
+{
+    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
+        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+
+template <class T>
+list<T> list<T>::slice(iterator start, iterator end)
+{
+    list_link* link = start.link, *last_link = end.link;
+    if (link == this->p_head_link)
+        throw invalid_exception("invalid slice start iterator at list::slice");
+    else if (last_link == this->p_tail_link)
+        throw invalid_exception("invalid slice end iterator at list::slice");
+
+    link->p_prev->p_next = last_link->p_next;
+    link->p_prev->p_next->p_prev = link->p_prev;
+    list<T> result(link, last_link);
+    int length = 0;
+    for (list_link* iter = this->p_head_link->p_next, * iter_end = this->p_tail_link; iter != iter_end; iter = iter->p_next)
+        length++;
+    this->i_length = length;
+    return result;
+}
+
+template <class T>
+list<T> list<T>::slice(int start, int end)
+{
+    return this->slice(this->iterator_at(start), this->iterator_at(end));
+}
+
+template <class T>
+list<T>& list<T>::slice_inplace(iterator start, iterator end)
+{
+    list_link* link = start.link, *last_link = end.link;
+    if (link == this->p_head_link)
+        throw invalid_exception("invalid slice start iterator at list::slice_inplace");
+    else if (last_link == this->p_tail_link)
+        throw invalid_exception("invalid slice end iterator at list::slice_inplace");
+
+    for (list_link* iter = this->p_head_link->p_next; iter != link;)
+    {
+        list_link* next = iter->p_next;
+        delete iter->p_item;
+        delete iter;
+        iter = next;
+        this->i_length--;
+    }
+    for (list_link* iter = last_link->p_next, * iter_end = this->p_tail_link; iter != iter_end;)
+    {
+        list_link* next = iter->p_next;
+        delete iter->p_item;
+        delete iter;
+        iter = next;
+        this->i_length--;
+    }
+
+    this->p_head_link->p_next = link;
+    this->p_head_link->p_next->p_prev = this->p_head_link;
+    this->p_tail_link->p_prev = last_link;
+    this->p_tail_link->p_prev->p_next = this->p_tail_link;
+
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::slice_inplace(int start, int end)
+{
+    return this->slice_inplace(this->iterator_at(start), this->iterator_at(end));
+}
+
+template <class T>
+list<T>& list<T>::splice(list<T>& items, iterator start, iterator end)
+{
+    list_link* link = start.link, *last_link = end.link;
+    if (link == this->p_head_link)
+        throw invalid_exception("invalid splice start iterator at list::splice");
+    else if (last_link == this->p_tail_link)
+        throw invalid_exception("invalid splice end iterator at list::splice");
+
+    list_link* before = link->p_prev, * after = last_link->p_next;
+
+    for (list_link* iter = link; iter != after;)
+    {
+        list_link* next = iter->p_next;
+        delete iter->p_item;
+        delete iter;
+        iter = next;
+        this->i_length--;
+    }
+
+    items.pilfer_links(before, after, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::splice(list<T>&& items, iterator start, iterator end)
+{
+    list_link* link = start.link, *last_link = end.link;
+    if (link == this->p_head_link)
+        throw invalid_exception("invalid splice start iterator at list::splice");
+    else if (last_link == this->p_tail_link)
+        throw invalid_exception("invalid splice end iterator at list::splice");
+
+    list_link* before = link->p_prev, * after = last_link->p_next;
+
+    for (list_link* iter = link; iter != after;)
+    {
+        list_link* next = iter->p_next;
+        delete iter->p_item;
+        delete iter;
+        iter = next;
+        this->i_length--;
+    }
+
+    items.pilfer_links(before, after, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::splice(list<T>& items, int start, int end)
+{
+    return this->splice(items, this->iterator_at(start), this->iterator_at(end));
+}
+
+template <class T>
+list<T>& list<T>::splice(list<T>&& items, int start, int end)
+{
+    return this->splice(items, this->iterator_at(start), this->iterator_at(end));
+}
 
 
 
@@ -646,59 +852,6 @@ bool list<T>::notall(bool (*filter_function)(const T&)) const
 }
 
 
-
-template <class T>
-void list<T>::copy(const list<T>& other)
-{
-    this->destroy();
-    this->init_empty();
-
-    list_link* prev_link = this->p_head_link, *last_link = this->p_tail_link;
-    for (iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
-    {
-        list_link* link = new list_link(prev_link, new T(*iter), last_link);
-        prev_link->p_next = link;
-        prev_link = link;
-        this->i_length++;
-    }
-    last_link->p_prev = prev_link;
-}
-
-template <class T>
-list<T> list<T>::clone()
-{
-    return list<T>(*this);
-}
-
-template <class T>
-list<T>& list<T>::concat(list<T>& other)
-{
-    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
-    return *this;
-}
-
-template <class T>
-list<T>& list<T>::concat(list<T>&& other)
-{
-    other.pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
-    return *this;
-}
-
-template <class T>
-list<T>& list<T>::concat(list<list<T>>& other)
-{
-    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
-        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
-    return *this;
-}
-
-template <class T>
-list<T>& list<T>::concat(list<list<T>>&& other)
-{
-    for (typename list<list<T>>::iterator iter = other.begin(), iter_end = other.end(); iter != iter_end; ++iter)
-        (*iter).pilfer_links(this->p_tail_link->p_prev, this->p_tail_link, &this->i_length);
-    return *this;
-}
 
 
 
