@@ -41,7 +41,6 @@ public:
 
     class list_link;
     class iterator;
-//    typedef list_link iterator;
 
     list();
     list(const list<T>& other);
@@ -1000,6 +999,7 @@ typename list<T>::iterator list<T>::iterator::operator-(int amount)
 
     return list<T>::iterator(link);
 }
+
 
 
 
