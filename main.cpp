@@ -21,10 +21,15 @@ int main (int argc, char** argv)
 {
     cout << "hello world" << endl;
 
-    tuple<int, int> asdf(15, 35);
+    tuple<bytestring, bytestring> asdf("asdf", "qwerty");
 
-    cout << "first: " << asdf.first() << endl;
-    cout << "second: " << asdf.second() << endl;
+    list<bytestring> vals = asdf;
+
+    cout << "length: " << vals.length() << endl;
+    cout << "first: " << vals[0].c_str() << endl;
+    cout << "second: " << vals[1].c_str() << endl;
+//    cout << "first: " << asdf.first().c_str() << endl;
+//    cout << "second: " << asdf.second().c_str() << endl;
 
 //    all_featherful_tests();
 

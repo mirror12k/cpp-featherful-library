@@ -3,6 +3,7 @@
 
 
 #include "exception.hpp"
+#include "tuple.hpp"
 
 #include <cstdio>
 
@@ -44,10 +45,18 @@ public:
 
     list();
     list(const list<T>& other);
+    list(const tuple<T, T, T, T>& other);
+    list(const tuple<T, T, T>& other);
+    list(const tuple<T, T>& other);
+    list(const tuple<T>& other);
     list(list_link* start, list_link* end);
     ~list();
 
     list<T>& operator=(list<T> other);
+    list<T>& operator=(const tuple<T, T, T, T>& other);
+    list<T>& operator=(const tuple<T, T, T>& other);
+    list<T>& operator=(const tuple<T, T>& other);
+    list<T>& operator=(const tuple<T>& other);
     T& operator[](int index);
     list<T>& operator+(list<T>& other);
     list<T>& operator+(list<T>&& other);
@@ -183,6 +192,38 @@ list<T>::list(const list<T>& other)
     this->copy(other);
 }
 
+template <class T>
+list<T>::list(const tuple<T, T, T, T>& other)
+{
+//    printf("ctor tuple copy\n");
+    this->init_empty();
+    *this = other;
+}
+
+template <class T>
+list<T>::list(const tuple<T, T, T>& other)
+{
+//    printf("ctor tuple copy\n");
+    this->init_empty();
+    *this = other;
+}
+
+template <class T>
+list<T>::list(const tuple<T, T>& other)
+{
+//    printf("ctor tuple copy\n");
+    this->init_empty();
+    *this = other;
+}
+
+template <class T>
+list<T>::list(const tuple<T>& other)
+{
+//    printf("ctor tuple copy\n");
+    this->init_empty();
+    *this = other;
+}
+
 
 template <class T>
 list<T>::list(list_link* start, list_link* end)
@@ -212,7 +253,56 @@ template <class T>
 list<T>& list<T>::operator=(list<T> other)
 {
     this->copy(other);
-//    other.pilfer_links(this->p_head_link, this->p_tail_link, &this->i_length);
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::operator=(const tuple<T, T, T, T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    this->push(new T(other.arg0()));
+    this->push(new T(other.arg1()));
+    this->push(new T(other.arg2()));
+    this->push(new T(other.arg3()));
+
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::operator=(const tuple<T, T, T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    this->push(new T(other.arg0()));
+    this->push(new T(other.arg1()));
+    this->push(new T(other.arg2()));
+
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::operator=(const tuple<T, T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    this->push(new T(other.arg0()));
+    this->push(new T(other.arg1()));
+
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::operator=(const tuple<T>& other)
+{
+    this->destroy();
+    this->init_empty();
+
+    this->push(new T(other.arg0()));
+
     return *this;
 }
 
