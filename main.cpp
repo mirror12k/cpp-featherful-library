@@ -36,6 +36,7 @@ int main (int argc, char** argv)
     unsigned short val = 15;
     val -= 21;
     cout << "to_string: " << featherful::to_string(val).c_str() << endl;
+    cout << "to_string: " << featherful::to_string<bytestring>(vals).c_str() << endl;
 
     return 0;
 }

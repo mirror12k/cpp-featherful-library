@@ -1,6 +1,8 @@
 
 #include "to_string.hpp"
 
+#include "list.hpp"
+
 namespace featherful
 {
 
@@ -123,6 +125,16 @@ bytestring to_string<char*>(char* const& item)
 {
     return bytestring(item);
 }
+
+
+
+template<>
+bytestring to_string<bytestring>(const bytestring& item)
+{
+    return item;
+}
+
+
 
 }
 
