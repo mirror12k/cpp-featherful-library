@@ -110,6 +110,7 @@ public:
     int parse_int() const;
     uint parse_uint() const;
     bytestring to_hex() const;
+    bytestring from_hex() const;
 
 
     friend std::ostream& operator<<(std::ostream& output, const bytestring& str);

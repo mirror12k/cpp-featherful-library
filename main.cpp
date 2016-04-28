@@ -51,6 +51,10 @@ int main (int argc, char** argv)
     cout << bytestring("asdf ASDF").to_hex() << endl;
     cout << bytestring("1337").to_hex() << endl;
 
+
+    cout << bytestring("41424344").from_hex() << endl;
+    cout << bytestring("31203220334sdf").from_hex() << endl;
+
     unsigned int val = -16666;
     cout << bytestring("hello %!").format(val) << endl;
     cout << bytestring("hello %, you have % %!").format(val, 15, bytestring("dollars")) << endl;
@@ -63,6 +67,7 @@ int main (int argc, char** argv)
 
     cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() << endl;
     cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_uppercase() << endl;
+
 
     return 0;
 }

@@ -690,6 +690,53 @@ bytestring bytestring::to_hex() const
 }
 
 
+bytestring bytestring::from_hex() const
+{
+    int str_len = 0;
+    for (bytestring::const_iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; iter++)
+    {
+        if (((*iter >= '0' && *iter <= '9') || (*iter >= 'a' && *iter <= 'f') || (*iter >= 'A' && *iter <= 'F')) &&
+            (++iter != iter_end) &&
+            (*iter >= '0' && *iter <= '9') || (*iter >= 'a' && *iter <= 'f') || (*iter >= 'A' && *iter <= 'F'))
+        {
+            str_len++;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    char* buf = new char[str_len], *write = buf;
+    for (bytestring::const_iterator iter = this->begin(), iter_end = this->begin() + str_len * 2; iter != iter_end; iter++)
+    {
+        char val;
+        if (*iter >= '0' && *iter <= '9')
+            val = *iter - '0';
+        else if (*iter >= 'a' && *iter <= 'f')
+            val = *iter - 'a';
+        else if (*iter >= 'A' && *iter <= 'F')
+            val = *iter - 'A';
+
+        iter++;
+        val <<= 4;
+
+        if (*iter >= '0' && *iter <= '9')
+            val |= *iter - '0';
+        else if (*iter >= 'a' && *iter <= 'f')
+            val |= *iter - 'a';
+        else if (*iter >= 'A' && *iter <= 'F')
+            val |= *iter - 'A';
+        *write++ = val;
+    }
+
+    bytestring result(str_len, buf);
+    delete buf;
+
+    return result;
+}
+
+
 
 
 
