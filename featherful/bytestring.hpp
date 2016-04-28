@@ -104,6 +104,9 @@ public:
     bytestring format(const T1& v1) const;
 
 
+    bytestring to_lowercase() const;
+    bytestring to_uppercase() const;
+
     int parse_int() const;
     uint parse_uint() const;
     bytestring to_hex() const;

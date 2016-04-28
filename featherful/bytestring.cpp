@@ -593,6 +593,40 @@ bool bytestring::empty() const
 
 
 
+bytestring bytestring::to_lowercase() const
+{
+    char* str = this->c_str();
+    for (char* iter = str, * iter_end = str + this->i_length; iter != iter_end; iter++)
+    {
+        if (*iter >= 0x41 && *iter <= 0x5a)
+            *iter |= 0x20;
+    }
+    bytestring result (this->i_length, str);
+    delete str;
+
+    return result;
+}
+
+bytestring bytestring::to_uppercase() const
+{
+    char* str = this->c_str();
+    for (char* iter = str, * iter_end = str + this->i_length; iter != iter_end; iter++)
+    {
+        if (*iter >= 0x61 && *iter <= 0x7a)
+            *iter &= 0xdf;
+    }
+    bytestring result (this->i_length, str);
+    delete str;
+
+    return result;
+}
+
+
+
+
+
+
+
 int bytestring::parse_int() const
 {
     if (this->i_length == 0)

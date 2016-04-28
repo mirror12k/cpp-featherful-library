@@ -59,6 +59,11 @@ int main (int argc, char** argv)
     cout << bytestring("% %! % + %")
         .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
 
+
+
+    cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() << endl;
+    cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_uppercase() << endl;
+
     return 0;
 }
 
