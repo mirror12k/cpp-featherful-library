@@ -26,8 +26,8 @@ int main (int argc, char** argv)
     list<bytestring> vals = asdf;
 
     cout << "length: " << vals.length() << endl;
-    cout << "first: " << vals[0].c_str() << endl;
-    cout << "second: " << vals[1].c_str() << endl;
+    cout << "first: " << vals[0] << endl;
+    cout << "second: " << vals[1] << endl;
 //    cout << "first: " << asdf.first().c_str() << endl;
 //    cout << "second: " << asdf.second().c_str() << endl;
 
@@ -35,8 +35,8 @@ int main (int argc, char** argv)
 
     unsigned short val = 15;
     val -= 21;
-    cout << "to_string: " << featherful::to_string(val).c_str() << endl;
-    cout << "to_string: " << featherful::to_string<bytestring>(vals).c_str() << endl;
+    cout << "to_string: " << featherful::to_string(val) << endl;
+    cout << "to_string: " << featherful::to_string(vals) << endl;
 
     return 0;
 }

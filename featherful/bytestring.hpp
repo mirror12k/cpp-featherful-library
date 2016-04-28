@@ -1,7 +1,7 @@
 
 #pragma once
 
-
+#include <iostream>
 #include "list.hpp"
 
 namespace featherful
@@ -77,7 +77,7 @@ public:
 
     bool empty() const;
 
-
+    friend std::ostream& operator<<(std::ostream& output, const bytestring& str);
 
 private:
     int i_length;

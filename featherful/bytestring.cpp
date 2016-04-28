@@ -581,6 +581,14 @@ bool bytestring::empty() const
 }
 
 
+std::ostream& operator<<(std::ostream& output, const bytestring& str)
+{
+    output.write(str.buffer(), str.length());
+    return output;
+}
+
+
+
 }
 
 
