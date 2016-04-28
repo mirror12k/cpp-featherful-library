@@ -24,16 +24,14 @@ bytestring to_string<int>(const int& item)
     for (int i = val; i > 0; i /= 10)
         char_count++;
 
-    char* buf = new char[char_count + 1];
-    buf[char_count] = '\0';
-    if (negative)
-        *buf = '-';
+    char* buf = new char[char_count];
+    *buf = '-'; // testing for negative is absolutely unnecessary, it will be overwritten anyways
 
     char* writer = buf + char_count;
     for (int i = val; i > 0; i /= 10)
         *--writer = (char)((i % 10) + 0x30);
 
-    bytestring result(buf);
+    bytestring result(char_count, buf);
     delete buf;
 
     return result;
@@ -50,13 +48,12 @@ bytestring to_string<unsigned int>(const unsigned int& item)
     for (unsigned int i = val; i > 0; i /= 10)
         char_count++;
 
-    char* buf = new char[char_count + 1];
-    buf[char_count] = '\0';
+    char* buf = new char[char_count];
     char* writer = buf + char_count;
     for (unsigned int i = val; i > 0; i /= 10)
         *--writer = (char)((i % 10) + 0x30);
 
-    bytestring result(buf);
+    bytestring result(char_count, buf);
     delete buf;
 
     return result;
@@ -80,16 +77,14 @@ bytestring to_string<short>(const short& item)
     for (short i = val; i > 0; i /= 10)
         char_count++;
 
-    char* buf = new char[char_count + 1];
-    buf[char_count] = '\0';
-    if (negative)
-        *buf = '-';
+    char* buf = new char[char_count];
+    *buf = '-';
 
     char* writer = buf + char_count;
     for (short i = val; i > 0; i /= 10)
         *--writer = (char)((i % 10) + 0x30);
 
-    bytestring result(buf);
+    bytestring result(char_count, buf);
     delete buf;
 
     return result;
@@ -106,13 +101,12 @@ bytestring to_string<unsigned short>(const unsigned short& item)
     for (unsigned short i = val; i > 0; i /= 10)
         char_count++;
 
-    char* buf = new char[char_count + 1];
-    buf[char_count] = '\0';
+    char* buf = new char[char_count];
     char* writer = buf + char_count;
     for (unsigned short i = val; i > 0; i /= 10)
         *--writer = (char)((i % 10) + 0x30);
 
-    bytestring result(buf);
+    bytestring result(char_count, buf);
     delete buf;
 
     return result;

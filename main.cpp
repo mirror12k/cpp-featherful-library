@@ -47,6 +47,10 @@ int main (int argc, char** argv)
     cout << bytestring("3000000000").parse_uint() << endl;
     cout << bytestring("-73").parse_uint() << endl;
 
+
+    cout << bytestring("asdf ASDF").to_hex() << endl;
+    cout << bytestring("1337").to_hex() << endl;
+
     unsigned int val = -16666;
     cout << bytestring("hello %!").format(val) << endl;
     cout << bytestring("hello %, you have % %!").format(val, 15, bytestring("dollars")) << endl;

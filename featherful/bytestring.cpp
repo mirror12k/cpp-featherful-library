@@ -604,10 +604,10 @@ int bytestring::parse_int() const
     for (int offset = negative; offset < this->i_length; offset++)
     {
         char val = this->a_buffer[offset];
-        if (val < 0x30 || val > 0x39)
+        if (val < '0' || val > '9')
             break;
 
-        result = result * 10 + val - 0x30;
+        result = result * 10 + val - '0';
     }
 
     return negative ? -result : result;
@@ -622,16 +622,38 @@ uint bytestring::parse_uint() const
     for (int offset = 0; offset < this->i_length; offset++)
     {
         char val = this->a_buffer[offset];
-        if (val < 0x30 || val > 0x39)
+        if (val < '0' || val > '9')
             break;
 
-        result = result * 10 + val - 0x30;
+        result = result * 10 + val - '0';
     }
 
     return result;
 }
 
 
+
+bytestring bytestring::to_hex() const
+{
+    char* buf = new char[this->i_length * 2], *write = buf;
+    for (const char* read = this->a_buffer, *read_end = this->a_buffer + this->i_length; read != read_end; read++)
+    {
+        char c1 = *read >> 4, c2 = *read & 0xf;
+        if (c1 < 0xa)
+            *write++ = '0' + c1;
+        else
+            *write++ = 'a' + c1;
+        if (c2 < 0xa)
+            *write++ = '0' + c2;
+        else
+            *write++ = 'a' + c2;
+    }
+
+    bytestring result(this->i_length * 2, buf);
+    delete buf;
+
+    return result;
+}
 
 
 

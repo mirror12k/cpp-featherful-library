@@ -106,6 +106,7 @@ public:
 
     int parse_int() const;
     uint parse_uint() const;
+    bytestring to_hex() const;
 
 
     friend std::ostream& operator<<(std::ostream& output, const bytestring& str);
@@ -120,7 +121,7 @@ private:
 
 
 
-
+// pre-declare these functions instead of including to_string because to_string requires bytestring
 template<typename T>
 bytestring to_string(const T& item);
 template<typename T>
