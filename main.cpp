@@ -6,16 +6,16 @@ using std::cout;
 using std::endl;
 
 #define ENABLE_DEBUG
-#include "featherful.hpp"
+#include "featherful/featherful.hpp"
 
 using featherful::bytestring;
 using featherful::list;
+using featherful::tuple;
 
 #include "featherful_tests/test_all.hpp"
 
-#include "featherful/tuple.hpp"
+//#include "featherful/to_string.hpp"
 
-using featherful::tuple;
 
 int main (int argc, char** argv)
 {
@@ -32,6 +32,10 @@ int main (int argc, char** argv)
 //    cout << "second: " << asdf.second().c_str() << endl;
 
 //    all_featherful_tests();
+
+    unsigned short val = 15;
+    val -= 21;
+    cout << "to_string: " << featherful::to_string(val).c_str() << endl;
 
     return 0;
 }

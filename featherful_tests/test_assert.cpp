@@ -1,7 +1,7 @@
 
 #include "test_assert.hpp"
 
-#include "../featherful.hpp"
+#include "../featherful/featherful.hpp"
 
 using featherful::test_results;
 

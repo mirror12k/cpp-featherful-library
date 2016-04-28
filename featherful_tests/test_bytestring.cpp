@@ -2,7 +2,7 @@
 
 #include "test_bytestring.hpp"
 
-#include "../featherful.hpp"
+#include "../featherful/featherful.hpp"
 
 using featherful::test_results;
 using featherful::bytestring;

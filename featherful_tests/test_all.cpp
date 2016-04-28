@@ -1,5 +1,5 @@
 
-#include "../featherful.hpp"
+#include "../featherful/featherful.hpp"
 
 #include "test_list.hpp"
 #include "test_bytestring.hpp"

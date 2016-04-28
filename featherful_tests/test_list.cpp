@@ -2,7 +2,7 @@
 
 #include "test_list.hpp"
 
-#include "../featherful.hpp"
+#include "../featherful/featherful.hpp"
 
 using featherful::test_results;
 using featherful::list;
