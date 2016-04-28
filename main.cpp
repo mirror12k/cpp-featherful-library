@@ -38,9 +38,13 @@ int main (int argc, char** argv)
 //    cout << "to_string: " << featherful::to_string(val) << endl;
 //    cout << "to_string: " << featherful::to_string(vals) << endl;
 
-    cout << bytestring("hello %!").format(tuple<bytestring>(bytestring("test"))) << endl;
-    cout << bytestring("% %! %")
-        .format(tuple<bytestring, int, list<bytestring>>(bytestring("hello"), -1337, bytestring("123456") / 3)) << endl;
+    unsigned int val = -16666;
+    cout << bytestring("hello %!").format(val) << endl;
+    cout << bytestring("hello %, you have % %!").format(val, 15, bytestring("dollars")) << endl;
+    cout << bytestring("hello %, you have % %: %").format(val, 15, bytestring("dollars"), bytestring("asdf+qwerty+123456") / "+") << endl;
+//    cout << bytestring("hello %!").format(tuple<bytestring>(bytestring("test"))) << endl;
+    cout << bytestring("% %! % + %")
+        .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
 
     return 0;
 }
