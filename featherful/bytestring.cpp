@@ -593,6 +593,47 @@ bool bytestring::empty() const
 
 
 
+int bytestring::parse_int() const
+{
+    if (this->i_length == 0)
+        return 0;
+
+    int result = 0;
+    bool negative = this->a_buffer[0] == '-';
+
+    for (int offset = negative; offset < this->i_length; offset++)
+    {
+        char val = this->a_buffer[offset];
+        if (val < 0x30 || val > 0x39)
+            break;
+
+        result = result * 10 + val - 0x30;
+    }
+
+    return negative ? -result : result;
+}
+
+uint bytestring::parse_uint() const
+{
+    if (this->i_length == 0)
+        return 0;
+
+    int result = 0;
+    for (int offset = 0; offset < this->i_length; offset++)
+    {
+        char val = this->a_buffer[offset];
+        if (val < 0x30 || val > 0x39)
+            break;
+
+        result = result * 10 + val - 0x30;
+    }
+
+    return result;
+}
+
+
+
+
 
 
 

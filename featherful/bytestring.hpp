@@ -85,24 +85,27 @@ public:
 
 
     template <typename T1, typename T2, typename T3, typename T4>
-    bytestring format(const tuple<T1, T2, T3, T4>& items);
+    bytestring format(const tuple<T1, T2, T3, T4>& items) const;
     template <typename T1, typename T2, typename T3>
-    bytestring format(const tuple<T1, T2, T3>& items);
+    bytestring format(const tuple<T1, T2, T3>& items) const;
     template <typename T1, typename T2>
-    bytestring format(const tuple<T1, T2>& items);
+    bytestring format(const tuple<T1, T2>& items) const;
     template <typename T1>
-    bytestring format(const tuple<T1>& items);
+    bytestring format(const tuple<T1>& items) const;
 
 
     template <typename T1, typename T2, typename T3, typename T4>
-    bytestring format(const T1& v1, const T2& v2, const T3& v3, const T4& v4);
+    bytestring format(const T1& v1, const T2& v2, const T3& v3, const T4& v4) const;
     template <typename T1, typename T2, typename T3>
-    bytestring format(const T1& v1, const T2& v2, const T3& v3);
+    bytestring format(const T1& v1, const T2& v2, const T3& v3) const;
     template <typename T1, typename T2>
-    bytestring format(const T1& v1, const T2& v2);
+    bytestring format(const T1& v1, const T2& v2) const;
     template <typename T1>
-    bytestring format(const T1& v1);
+    bytestring format(const T1& v1) const;
 
+
+    int parse_int() const;
+    uint parse_uint() const;
 
 
     friend std::ostream& operator<<(std::ostream& output, const bytestring& str);
@@ -128,7 +131,7 @@ bytestring to_string(const list<T>& item);
 
 
 template <typename T1, typename T2, typename T3, typename T4>
-bytestring bytestring::format(const tuple<T1, T2, T3, T4>& items)
+bytestring bytestring::format(const tuple<T1, T2, T3, T4>& items) const
 {
     bytestring result = this->replace_once("%", to_string(items.arg0()));
     result = result.replace_once("%", to_string(items.arg1()));
@@ -138,7 +141,7 @@ bytestring bytestring::format(const tuple<T1, T2, T3, T4>& items)
 }
 
 template <typename T1, typename T2, typename T3>
-bytestring bytestring::format(const tuple<T1, T2, T3>& items)
+bytestring bytestring::format(const tuple<T1, T2, T3>& items) const
 {
     bytestring result = this->replace_once("%", to_string(items.arg0()));
     result = result.replace_once("%", to_string(items.arg1()));
@@ -147,7 +150,7 @@ bytestring bytestring::format(const tuple<T1, T2, T3>& items)
 }
 
 template <typename T1, typename T2>
-bytestring bytestring::format(const tuple<T1, T2>& items)
+bytestring bytestring::format(const tuple<T1, T2>& items) const
 {
     bytestring result = this->replace_once("%", to_string(items.arg0()));
     result = result.replace_once("%", to_string(items.arg1()));
@@ -155,7 +158,7 @@ bytestring bytestring::format(const tuple<T1, T2>& items)
 }
 
 template <typename T1>
-bytestring bytestring::format(const tuple<T1>& items)
+bytestring bytestring::format(const tuple<T1>& items) const
 {
     bytestring result = this->replace_once("%", to_string(items.arg0()));
     return result;
@@ -165,7 +168,7 @@ bytestring bytestring::format(const tuple<T1>& items)
 
 
 template <typename T1, typename T2, typename T3, typename T4>
-bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3, const T4& v4)
+bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3, const T4& v4) const
 {
     bytestring result = *this;
     result = result.replace_once("%", to_string(v1));
@@ -176,7 +179,7 @@ bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3, const T4
 }
 
 template <typename T1, typename T2, typename T3>
-bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3)
+bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3) const
 {
     bytestring result = *this;
     result = result.replace_once("%", to_string(v1));
@@ -186,7 +189,7 @@ bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3)
 }
 
 template <typename T1, typename T2>
-bytestring bytestring::format(const T1& v1, const T2& v2)
+bytestring bytestring::format(const T1& v1, const T2& v2) const
 {
     bytestring result = *this;
     result = result.replace_once("%", to_string(v1));
@@ -195,13 +198,12 @@ bytestring bytestring::format(const T1& v1, const T2& v2)
 }
 
 template <typename T1>
-bytestring bytestring::format(const T1& v1)
+bytestring bytestring::format(const T1& v1) const
 {
     bytestring result = *this;
     result = result.replace_once("%", to_string(v1));
     return result;
 }
-
 
 
 

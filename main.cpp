@@ -38,6 +38,15 @@ int main (int argc, char** argv)
 //    cout << "to_string: " << featherful::to_string(val) << endl;
 //    cout << "to_string: " << featherful::to_string(vals) << endl;
 
+    cout << bytestring("-15").parse_int() << endl;
+    cout << bytestring("1337").parse_int() << endl;
+    cout << bytestring("007").parse_int() << endl;
+    cout << bytestring("0").parse_int() << endl;
+    cout << bytestring("-13asdf").parse_int() << endl;
+    cout << bytestring("3000000000").parse_int() << endl;
+    cout << bytestring("3000000000").parse_uint() << endl;
+    cout << bytestring("-73").parse_uint() << endl;
+
     unsigned int val = -16666;
     cout << bytestring("hello %!").format(val) << endl;
     cout << bytestring("hello %, you have % %!").format(val, 15, bytestring("dollars")) << endl;
