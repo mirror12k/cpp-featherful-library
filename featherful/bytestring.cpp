@@ -351,10 +351,19 @@ bytestring bytestring::replace(const bytestring& needle, const bytestring& repla
     {
         result = result.splice(replacement, offset, offset + needle.length() - 1);
         offset += replacement.length();
-        if (offset == result.length())
+        if ((uint)(offset) == result.length())
             return result;
         offset = result.find(needle, offset);
     }
+    return result;
+}
+
+bytestring bytestring::replace_once(const bytestring& needle, const bytestring& replacement) const
+{
+    bytestring result = *this;
+    int offset = result.find(needle);
+    if (offset != -1)
+        result = result.splice(replacement, offset, offset + needle.length() - 1);
     return result;
 }
 
@@ -579,6 +588,13 @@ bool bytestring::empty() const
 {
     return this->i_length == 0;
 }
+
+
+
+
+
+
+
 
 
 std::ostream& operator<<(std::ostream& output, const bytestring& str)

@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include "list.hpp"
+#include "tuple.hpp"
+//#include "to_string.hpp"
 
 namespace featherful
 {
+
+
+
 
 
 class bytestring
@@ -57,6 +62,7 @@ public:
     bytestring erase(int start, int end=-1) const;
     bytestring remove(const bytestring& needle) const;
     bytestring replace(const bytestring& needle, const bytestring& replacement) const;
+    bytestring replace_once(const bytestring& needle, const bytestring& replacement) const;
     bytestring splice(const bytestring& segment, int start, int end=-1) const;
 
     bytestring multiply(uint times) const;
@@ -77,11 +83,94 @@ public:
 
     bool empty() const;
 
+
+    template <typename T1, typename T2, typename T3, typename T4>
+    bytestring format(tuple<T1, T2, T3, T4> items);
+    template <typename T1, typename T2, typename T3>
+    bytestring format(tuple<T1, T2, T3> items);
+    template <typename T1, typename T2>
+    bytestring format(tuple<T1, T2> items);
+    template <typename T1>
+    bytestring format(tuple<T1> items);
+
+
+    template <typename T1>
+    bytestring format(const T1& v1);
+
+
+
     friend std::ostream& operator<<(std::ostream& output, const bytestring& str);
 
 private:
     int i_length;
     const char* a_buffer;
 };
+
+
+
+
+
+
+
+template<typename T>
+bytestring to_string(const T& item);
+template<typename T>
+bytestring to_string(const list<T>& item);
+
+
+
+
+
+template <typename T1, typename T2, typename T3, typename T4>
+bytestring bytestring::format(tuple<T1, T2, T3, T4> items)
+{
+    bytestring result = this->replace_once("%", to_string(items.arg0()));
+    result = result.replace_once("%", to_string(items.arg1()));
+    result = result.replace_once("%", to_string(items.arg2()));
+    result = result.replace_once("%", to_string(items.arg3()));
+    return result;
+}
+
+template <typename T1, typename T2, typename T3>
+bytestring bytestring::format(tuple<T1, T2, T3> items)
+{
+    bytestring result = this->replace_once("%", to_string(items.arg0()));
+    result = result.replace_once("%", to_string(items.arg1()));
+    result = result.replace_once("%", to_string(items.arg2()));
+    return result;
+}
+
+template <typename T1, typename T2>
+bytestring bytestring::format(tuple<T1, T2> items)
+{
+    bytestring result = this->replace_once("%", to_string(items.arg0()));
+    result = result.replace_once("%", to_string(items.arg1()));
+    return result;
+}
+
+template <typename T1>
+bytestring bytestring::format(tuple<T1> items)
+{
+    bytestring result = this->replace_once("%", to_string(items.arg0()));
+    return result;
+}
+
+
+//
+//
+//template <typename T1>
+//bytestring bytestring::format(const T1& v1)
+//{
+//    bytestring result = *this;
+//
+//    result = result.replace_once("%", to_string(v1));
+//
+//    return result;
+//}
+
+
+
+
+
 
 }
