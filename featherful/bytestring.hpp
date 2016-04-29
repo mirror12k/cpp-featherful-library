@@ -6,6 +6,9 @@
 #include "tuple.hpp"
 //#include "to_string.hpp"
 
+#define ENABLE_DEBUG
+#include "debug.hpp"
+
 namespace featherful
 {
 
@@ -57,6 +60,11 @@ public:
     bytestring strip(const bytestring& chars) const;
     bytestring strip_whitespace() const;
     bytestring trim() const;
+
+    bytestring leftpad(char c, uint length) const;
+    bytestring leftpad(const bytestring& pad, uint length) const;
+    bytestring rightpad(char c, uint length) const;
+    bytestring rightpad(const bytestring& pad, uint length) const;
 
     bytestring insert(const bytestring& other, int offset=-1) const;
     bytestring erase(int start, int end=-1) const;
@@ -211,8 +219,31 @@ bytestring bytestring::format(const T1& v1, const T2& v2) const
 template <typename T1>
 bytestring bytestring::format(const T1& v1) const
 {
-    bytestring result = *this;
-    result = result.replace_once("%", to_string(v1));
+    bytestring result = this->before('%');
+    bytestring temp = this->after('%');
+
+    bytestring arg = temp.before('%');
+
+    bytestring val = to_string(v1);
+    DEBUG("got val: %s\n", val.c_str());
+    if (arg.length() == 0)
+    {
+        result = result + val;
+    }
+    else if (arg.length() > 1)
+    {
+        bytestring c = arg.substring(0, 0);
+        uint length = arg.substring(1).parse_uint();
+        if (val.length() < length)
+        {
+            val = (c * (length - val.length())) + val;
+        }
+        result = result + val;
+    }
+    else
+        throw invalid_exception("invalid format argument");
+    result = result + temp.after('%');
+
     return result;
 }
 

@@ -1,8 +1,6 @@
 
-#define ENABLE_DEBUG
 #include "bytestring.hpp"
 #include "exception.hpp"
-#include "debug.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -271,6 +269,45 @@ bytestring bytestring::trim() const
         return this->substring(offsetleft, offsetright);
 }
 
+
+
+bytestring bytestring::leftpad(char c, uint length) const
+{
+    if (this->i_length >= length)
+        return *this;
+    else
+        return (bytestring(c) * (length - this->i_length)).concat(*this);
+}
+
+bytestring bytestring::leftpad(const bytestring& pad, uint length) const
+{
+    if (this->i_length >= length)
+        return *this;
+    else
+        return (pad * ((length - this->i_length + pad.length() - 1) / pad.length())).substring(0, length - this->i_length - 1).concat(*this);
+}
+
+bytestring bytestring::rightpad(char c, uint length) const
+{
+    if (this->i_length >= length)
+        return *this;
+    else
+        return this->concat(bytestring(c) * (length - this->i_length));
+}
+
+bytestring bytestring::rightpad(const bytestring& pad, uint length) const
+{
+    if (this->i_length >= length)
+        return *this;
+    else
+        return this->concat((pad * ((length - this->i_length + pad.length() - 1) / pad.length())).substring(0, length - this->i_length - 1));
+}
+
+
+
+
+
+
 bytestring bytestring::insert(const bytestring& other, int offset) const
 {
     if (offset < 0)
@@ -415,9 +452,12 @@ bytestring bytestring::before(char c, int offset) const
     offset = this->find(c, offset);
     if (offset == -1)
         return *this;
+    else if (offset == 0)
+        return bytestring();
     else
         return this->substring(0, offset - 1);
 }
+
 bytestring bytestring::before(const bytestring& needle, int offset) const
 {
     offset = this->find(needle, offset);
@@ -434,9 +474,12 @@ bytestring bytestring::after(char c, int offset) const
     offset = this->find(c, offset);
     if (offset == -1)
         return *this;
+    else if (offset == this->i_length - 1)
+        return bytestring();
     else
         return this->substring(offset + 1);
 }
+
 bytestring bytestring::after(const bytestring& needle, int offset) const
 {
     offset = this->find(needle, offset);
