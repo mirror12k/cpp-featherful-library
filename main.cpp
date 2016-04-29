@@ -96,11 +96,13 @@ int main (int argc, char** argv)
 //    cout << bytestring("%03%:%_6%").format(15, -500) << endl;
 
 
-    list<bytestring> mylist;
+//    list<bytestring> mylist;
+//
+//    mylist.push(bytestring("asdf"));
+//
+//    cout << featherful::to_string(mylist) << endl;
 
-    mylist.push(bytestring("asdf"));
-
-    cout << featherful::to_string(mylist) << endl;
+    all_featherful_tests();
 
 
     return 0;

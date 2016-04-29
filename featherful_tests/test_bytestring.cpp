@@ -7,6 +7,7 @@
 using featherful::test_results;
 using featherful::bytestring;
 using featherful::list;
+using featherful::to_string;
 
 bool test_bytestring()
 {
@@ -14,6 +15,7 @@ bool test_bytestring()
     bytestring_tests.result(test_bytestring_basic());
     bytestring_tests.result(test_bytestring_insert());
     bytestring_tests.result(test_bytestring_search());
+    bytestring_tests.result(test_bytestring_to_string());
 
     bytestring_tests.finish();
     return bytestring_tests.is_successful();
@@ -170,6 +172,40 @@ bool test_bytestring_search()
 }
 
 
+
+
+bool test_bytestring_to_string()
+{
+    test_results results("bytestring to_string tests");
+
+    TEST(results, to_string(bytestring("as")) == bytestring("as"));
+    TEST(results, to_string(15) == bytestring("15"));
+    TEST(results, to_string(12348765) == bytestring("12348765"));
+    TEST(results, to_string(-543) == bytestring("-543"));
+    TEST(results, to_string((unsigned int)-15) == bytestring("4294967281"));
+    TEST(results, to_string((unsigned short)-5) == bytestring("65531"));
+
+    list<bytestring> vals;
+    TEST(results, to_string(vals) == bytestring("[]"));
+    vals.push("asdf");
+    TEST(results, to_string(vals) == bytestring("[asdf]"));
+    vals.push("qwerty");
+    TEST(results, to_string(vals) == bytestring("[asdf, qwerty]"));
+    vals.unshift("zxcv");
+    TEST(results, to_string(vals) == bytestring("[zxcv, asdf, qwerty]"));
+
+    list<int> vals2;
+    TEST(results, to_string(vals2) == bytestring("[]"));
+    vals2.push(15);
+    TEST(results, to_string(vals2) == bytestring("[15]"));
+    vals2.push(-1337);
+    TEST(results, to_string(vals2) == bytestring("[15, -1337]"));
+    vals2.unshift(65536);
+    TEST(results, to_string(vals2) == bytestring("[65536, 15, -1337]"));
+
+    results.finish();
+    return results.is_successful();
+}
 
 
 
