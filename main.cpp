@@ -103,7 +103,6 @@ int main (int argc, char** argv)
 //    cout << featherful::to_string(mylist) << endl;
 
 
-    cout << bytestring("asdf$1$qwerty$2$zxcv").after("$2$", 17) << endl;
 
     all_featherful_tests();
 

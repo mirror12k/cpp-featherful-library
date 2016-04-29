@@ -761,11 +761,11 @@ bytestring bytestring::to_hex() const
         if (c1 < 0xa)
             *write++ = '0' + c1;
         else
-            *write++ = 'a' + c1;
+            *write++ = 'a' + c1 - 0xa;
         if (c2 < 0xa)
             *write++ = '0' + c2;
         else
-            *write++ = 'a' + c2;
+            *write++ = 'a' + c2 - 0xa;
     }
 
     bytestring result(this->i_length * 2, buf);
@@ -799,9 +799,9 @@ bytestring bytestring::from_hex() const
         if (*iter >= '0' && *iter <= '9')
             val = *iter - '0';
         else if (*iter >= 'a' && *iter <= 'f')
-            val = *iter - 'a';
+            val = *iter - 'a' + 0xa;
         else if (*iter >= 'A' && *iter <= 'F')
-            val = *iter - 'A';
+            val = *iter - 'A' + 0xa;
 
         iter++;
         val <<= 4;
@@ -809,9 +809,9 @@ bytestring bytestring::from_hex() const
         if (*iter >= '0' && *iter <= '9')
             val |= *iter - '0';
         else if (*iter >= 'a' && *iter <= 'f')
-            val |= *iter - 'a';
+            val |= *iter - 'a' + 0xa;
         else if (*iter >= 'A' && *iter <= 'F')
-            val |= *iter - 'A';
+            val |= *iter - 'A' + 0xa;
         *write++ = val;
     }
 

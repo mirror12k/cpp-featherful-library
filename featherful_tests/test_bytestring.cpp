@@ -16,6 +16,7 @@ bool test_bytestring()
     bytestring_tests.result(test_bytestring_insert());
     bytestring_tests.result(test_bytestring_search());
     bytestring_tests.result(test_bytestring_to_string());
+    bytestring_tests.result(test_bytestring_conversion());
 
     bytestring_tests.finish();
     return bytestring_tests.is_successful();
@@ -222,6 +223,42 @@ bool test_bytestring_to_string()
     TEST(results, to_string(vals2) == bytestring("[15, -1337]"));
     vals2.unshift(65536);
     TEST(results, to_string(vals2) == bytestring("[65536, 15, -1337]"));
+
+    results.finish();
+    return results.is_successful();
+}
+
+
+
+
+bool test_bytestring_conversion()
+{
+    test_results results("bytestring conversion tests");
+
+    TEST(results, bytestring("").parse_int() == 0);
+    TEST(results, bytestring("asdf").parse_int() == 0);
+    TEST(results, bytestring("15").parse_int() == 15);
+    TEST(results, bytestring("65432187").parse_int() == 65432187);
+    TEST(results, bytestring("-156").parse_int() == -156);
+    TEST(results, bytestring("-65432187").parse_int() == -65432187);
+    TEST(results, bytestring("-156").parse_uint() == 0);
+    TEST(results, bytestring("156").parse_uint() == 156);
+
+    TEST(results, bytestring("1234").to_hex() == bytestring("31323334"));
+    TEST(results, bytestring("asdf").to_hex() == bytestring("61736466"));
+    TEST(results, bytestring("").to_hex() == bytestring(""));
+    TEST(results, bytestring(" ?").to_hex() == bytestring("203f"));
+
+    TEST(results, bytestring("31323334").from_hex() == bytestring("1234"));
+    TEST(results, bytestring("61736466").from_hex() == bytestring("asdf"));
+    TEST(results, bytestring("").from_hex() == bytestring(""));
+    TEST(results, bytestring("a").from_hex() == bytestring(""));
+    TEST(results, bytestring("-123456223f").from_hex() == bytestring(""));
+    TEST(results, bytestring("203f").from_hex() == bytestring(" ?"));
+
+
+    TEST(results, bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() == bytestring("password1234 !@#$%^&*()"));
+    TEST(results, bytestring("paSSwoRD1234 !@#$%^&*()").to_uppercase() == bytestring("PASSWORD1234 !@#$%^&*()"));
 
     results.finish();
     return results.is_successful();
