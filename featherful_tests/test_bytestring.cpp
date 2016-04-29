@@ -53,6 +53,14 @@ bool test_bytestring_basic()
     TEST(results, bytestring("\t\t  \r\n").trim() == bytestring(""));
     TEST(results, bytestring("b\t\t  \r\na").trim() == bytestring("b\t\t  \r\na"));
 
+
+    TEST(results, bytestring("asdf").leftpad('-', 8) == bytestring("----asdf"));
+    TEST(results, bytestring("asdf").rightpad('-', 8) == bytestring("asdf----"));
+    TEST(results, bytestring("asdf").leftpad("123", 8) == bytestring("1231asdf"));
+    TEST(results, bytestring("asdf").rightpad("123", 8) == bytestring("asdf1231"));
+    TEST(results, bytestring("asdf").leftpad('-', 3) == bytestring("asdf"));
+    TEST(results, bytestring("asdf").rightpad('-', 3) == bytestring("asdf"));
+
     results.finish();
     return results.is_successful();
 }
@@ -166,6 +174,18 @@ bool test_bytestring_search()
     TEST(results, bytestring("asdf").empty() == false);
     TEST(results, bytestring("").empty() == true);
     TEST(results, (bytestring("") + "qwerty").empty() == false);
+
+
+    TEST(results, bytestring("asdf$qwerty$zxcv").before('$') == bytestring("asdf"));
+    TEST(results, bytestring("asdf$qwerty$zxcv").before('$', 6) == bytestring("asdf$qwerty"));
+    TEST(results, bytestring("asdf$qwerty$zxcv").after('$') == bytestring("qwerty$zxcv"));
+    TEST(results, bytestring("asdf$qwerty$zxcv").after('$', 6) == bytestring("zxcv"));
+
+    TEST(results, bytestring("asdf$1$qwerty$2$zxcv").before("$1$") == bytestring("asdf"));
+    TEST(results, bytestring("asdf$1$qwerty$2$zxcv").after("$2$") == bytestring("zxcv"));
+
+    TEST(results, bytestring("asdf$1$qwerty$2$zxcv").before("$1$", 6) == bytestring("asdf$1$qwerty$2$zxcv"));
+    TEST(results, bytestring("asdf$1$qwerty$2$zxcv").after("$2$", 17) == bytestring("asdf$1$qwerty$2$zxcv"));
 
     results.finish();
     return results.is_successful();
