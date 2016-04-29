@@ -130,8 +130,8 @@ bool test_bytestring_search()
     TEST(results, bytestring("foo bar baz").find("ba", 9) == -1);
     TEST(results, bytestring("foo bar baz").find("az", -2) == 9);
     TEST(results, bytestring("foo bar baz").find("ar", -2) == -1);
+    TEST(results, bytestring("asdf").find("asdf", 5) == -1);
     TEST_THROW(results, bytestring("asdf").find("asdf", -5) == -1, featherful::range_exception);
-    TEST_THROW(results, bytestring("asdf").find("asdf", 5) == -1, featherful::range_exception);
 
     strings = bytestring("foo bar baz").split(' ');
     TEST(results, strings.length() == 3);

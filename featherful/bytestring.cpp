@@ -605,7 +605,7 @@ int bytestring::find(char c, int offset) const
             throw range_exception("negative offset too large in bytestring::find", offset);
     }
     else if (offset >= this->i_length)
-        throw range_exception("offset too large in bytestring::find", offset);
+        return -1;
 
     for (bytestring::const_iterator iter = this->begin() + offset, iter_end = this->end(); iter < iter_end; iter++)
         if (*iter == c)
@@ -622,7 +622,7 @@ int bytestring::find(const bytestring& needle, int offset) const
             throw range_exception("negative offset too large in bytestring::find", offset);
     }
     else if (offset >= this->i_length)
-        throw range_exception("offset too large in bytestring::find", offset);
+        return -1;
 
     if (needle.length() == 0)
         throw invalid_exception("bytestring::find called with 0 length needle");
@@ -824,6 +824,31 @@ bytestring bytestring::from_hex() const
 
 
 
+bytestring bytestring::format(list<bytestring>& vals) const
+{
+    bytestring temp = *this;
+    bytestring result = temp.before('%');
+    temp = temp.after('%');
+    while (vals.length())
+    {
+        bytestring val = vals.shift();
+        bytestring arg = temp.before('%');
+        temp = temp.after('%');
+
+        if (arg.length() > 1)
+            if (arg[-1] == '>')
+                val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+            else
+                val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+        else if (arg.length() > 0)
+            throw invalid_exception("invalid format argument");
+
+        result = result + val + temp.before('%');
+        temp = temp.after('%');
+    }
+
+    return result;
+}
 
 
 std::ostream& operator<<(std::ostream& output, const bytestring& str)

@@ -31,7 +31,7 @@ int main (int argc, char** argv)
 ////    cout << "first: " << asdf.first().c_str() << endl;
 ////    cout << "second: " << asdf.second().c_str() << endl;
 //
-////    all_featherful_tests();
+//    all_featherful_tests();
 //
 //    unsigned short val = 15;
 //    val -= 21;
@@ -59,7 +59,6 @@ int main (int argc, char** argv)
     cout << bytestring("hello %%!").format(val) << endl;
     cout << bytestring("hello %%, you have %% %%!").format(val, 15, bytestring("dollars")) << endl;
     cout << bytestring("hello %%, you have %% %%: %%").format(val, 15, bytestring("dollars"), bytestring("asdf+qwerty+123456") / "+") << endl;
-//    cout << bytestring("hello %!").format(tuple<bytestring>(bytestring("test"))) << endl;
     cout << bytestring("%% %%! %% + %%")
         .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
 
@@ -94,7 +93,7 @@ int main (int argc, char** argv)
     cout << bytestring("%_8>% |").format(bytestring("world")) << endl;
 
     cout << bytestring("FOXTROT%%ECHO%%ALPHA").format(bytestring("hello"), bytestring("world")) << endl;
-    cout << bytestring("%03%:% 6%").format(15, -500) << endl;
+    cout << bytestring("%03%:%_6%").format(15, -500) << endl;
 
 
     return 0;

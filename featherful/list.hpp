@@ -73,6 +73,8 @@ public:
     uint length() const;
     bool empty() const;
 
+    void push(const T& item);
+    void unshift(const T& item);
     void push(T* item);
     void unshift(T* item);
     T pop();
@@ -401,6 +403,24 @@ template <class T>
 bool list<T>::empty() const
 {
     return this->i_length == 0;
+}
+
+template <class T>
+void list<T>::push(const T& item)
+{
+    list_link* link = new list_link(this->p_tail_link->p_prev, new T(item), this->p_tail_link);
+    link->p_prev->p_next = link;
+    this->p_tail_link->p_prev = link;
+    this->i_length++;
+}
+
+template <class T>
+void list<T>::unshift(const T& item)
+{
+    list_link* link = new list_link(this->p_head_link, new T(item), this->p_head_link->p_next);
+    link->p_next->p_prev = link;
+    this->p_head_link->p_next = link;
+    this->i_length++;
 }
 
 template <class T>
