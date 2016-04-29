@@ -64,9 +64,16 @@ int main (int argc, char** argv)
         .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
 
 
-
     cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() << endl;
     cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_uppercase() << endl;
+
+    cout << bytestring("asdf%%qwerty").before("%%") << endl;
+    cout << bytestring("asdf%%qwerty").before("%%", 6) << endl;
+    cout << bytestring("asdf%%qwerty").after("%%") << endl;
+    cout << bytestring("asdf%%qwerty").after("%%", 6) << endl;
+
+    cout << "before empty: " << bytestring("%%qwerty").before("%%") << endl;
+    cout << "after empty: " << bytestring("asdf%%").after("%%") << endl;
 
 
     return 0;

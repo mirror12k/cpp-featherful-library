@@ -65,6 +65,12 @@ public:
     bytestring replace_once(const bytestring& needle, const bytestring& replacement) const;
     bytestring splice(const bytestring& segment, int start, int end=-1) const;
 
+    bytestring before(char c, int offset=0) const;
+    bytestring before(const bytestring& c, int offset=0) const;
+    bytestring after(char c, int offset=0) const;
+    bytestring after(const bytestring& c, int offset=0) const;
+
+
     bytestring multiply(uint times) const;
     list<bytestring> divide(uint times) const;
 

@@ -1,6 +1,8 @@
 
+#define ENABLE_DEBUG
 #include "bytestring.hpp"
 #include "exception.hpp"
+#include "debug.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -404,6 +406,46 @@ bytestring bytestring::splice(const bytestring& segment, int start, int end) con
     buffers[2] = this->buffer() + end;
 
     return bytestring(3, lengths, buffers);
+}
+
+
+
+bytestring bytestring::before(char c, int offset) const
+{
+    offset = this->find(c, offset);
+    if (offset == -1)
+        return *this;
+    else
+        return this->substring(0, offset - 1);
+}
+bytestring bytestring::before(const bytestring& needle, int offset) const
+{
+    offset = this->find(needle, offset);
+    if (offset == -1)
+        return *this;
+    else if (offset == 0)
+        return bytestring();
+    else
+        return this->substring(0, offset - 1);
+}
+
+bytestring bytestring::after(char c, int offset) const
+{
+    offset = this->find(c, offset);
+    if (offset == -1)
+        return *this;
+    else
+        return this->substring(offset + 1);
+}
+bytestring bytestring::after(const bytestring& needle, int offset) const
+{
+    offset = this->find(needle, offset);
+    if (offset == -1)
+        return *this;
+    else if (offset == this->i_length - needle.length())
+        return bytestring();
+    else
+        return this->substring(offset + needle.length());
 }
 
 
