@@ -7,6 +7,7 @@
 using featherful::test_results;
 using featherful::bytestring;
 using featherful::list;
+using featherful::tuple;
 using featherful::to_string;
 
 bool test_bytestring()
@@ -17,6 +18,7 @@ bool test_bytestring()
     bytestring_tests.result(test_bytestring_search());
     bytestring_tests.result(test_bytestring_to_string());
     bytestring_tests.result(test_bytestring_conversion());
+    bytestring_tests.result(test_bytestring_format());
 
     bytestring_tests.finish();
     return bytestring_tests.is_successful();
@@ -259,6 +261,39 @@ bool test_bytestring_conversion()
 
     TEST(results, bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() == bytestring("password1234 !@#$%^&*()"));
     TEST(results, bytestring("paSSwoRD1234 !@#$%^&*()").to_uppercase() == bytestring("PASSWORD1234 !@#$%^&*()"));
+
+    results.finish();
+    return results.is_successful();
+}
+
+
+
+
+
+
+bool test_bytestring_format()
+{
+    test_results results("bytestring format tests");
+
+    TEST(results, bytestring("asdf+%%-qwerty").format(bytestring("zxcv")) == bytestring("asdf+zxcv-qwerty"));
+    TEST(results, bytestring("asdf%%+%%-%%qwerty").format(-15, bytestring("zxcv"), 300) == bytestring("asdf-15+zxcv-300qwerty"));
+
+    TEST(results, bytestring("hello %%!").format((unsigned int)-16666) == bytestring("hello 4294950630!"));
+    TEST(results, bytestring("hello %%, you have %% %%!").format((unsigned int)-16666, 15, bytestring("dollars"))
+        == bytestring("hello 4294950630, you have 15 dollars!"));
+    TEST(results, bytestring("hello %%, you have %% %%: %%")
+        .format((unsigned int)-16666, 15, bytestring("dollars"), bytestring("asdf+qwerty+123456") / "+")
+        == bytestring("hello 4294950630, you have 15 dollars: [asdf, qwerty, 123456]"));
+    TEST(results, bytestring("%% %%! %% + %%")
+        .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3))
+        == bytestring("hello world! -1337 + [12, 34, 56]"));
+
+    TEST(results, bytestring("hello% 6%!").format(bytestring("world")) == bytestring("hello world!"));
+    TEST(results, bytestring("lol %04% there").format(15) == bytestring("lol 0015 there"));
+    TEST(results, bytestring("%_8% |").format(bytestring("world")) == bytestring("___world |"));
+    TEST(results, bytestring("%_8>% |").format(bytestring("world")) == bytestring("world___ |"));
+    TEST(results, bytestring("%03%:%_6%").format(15, -500) == bytestring("015:__-500"));
+
 
     results.finish();
     return results.is_successful();

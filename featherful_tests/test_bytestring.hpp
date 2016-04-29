@@ -9,3 +9,4 @@ bool test_bytestring_insert();
 bool test_bytestring_search();
 bool test_bytestring_to_string();
 bool test_bytestring_conversion();
+bool test_bytestring_format();
