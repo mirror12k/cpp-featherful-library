@@ -782,7 +782,7 @@ bytestring bytestring::from_hex() const
     {
         if (((*iter >= '0' && *iter <= '9') || (*iter >= 'a' && *iter <= 'f') || (*iter >= 'A' && *iter <= 'F')) &&
             (++iter != iter_end) &&
-            (*iter >= '0' && *iter <= '9') || (*iter >= 'a' && *iter <= 'f') || (*iter >= 'A' && *iter <= 'F'))
+            ((*iter >= '0' && *iter <= '9') || (*iter >= 'a' && *iter <= 'f') || (*iter >= 'A' && *iter <= 'F')))
         {
             str_len++;
         }

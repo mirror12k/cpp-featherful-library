@@ -130,7 +130,7 @@ public:
     friend std::ostream& operator<<(std::ostream& output, const bytestring& str);
 
 private:
-    int i_length;
+    uint i_length;
     const char* a_buffer;
 };
 
@@ -189,30 +189,150 @@ bytestring bytestring::format(const tuple<T1>& items) const
 template <typename T1, typename T2, typename T3, typename T4>
 bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3, const T4& v4) const
 {
-    bytestring result = *this;
-    result = result.replace_once("%", to_string(v1));
-    result = result.replace_once("%", to_string(v2));
-    result = result.replace_once("%", to_string(v3));
-    result = result.replace_once("%", to_string(v4));
+    bytestring result = this->before('%');
+    bytestring temp = this->after('%');
+
+    bytestring val = to_string(v1);
+    bytestring arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v2);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v3);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v4);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp;
+
     return result;
 }
 
 template <typename T1, typename T2, typename T3>
 bytestring bytestring::format(const T1& v1, const T2& v2, const T3& v3) const
 {
-    bytestring result = *this;
-    result = result.replace_once("%", to_string(v1));
-    result = result.replace_once("%", to_string(v2));
-    result = result.replace_once("%", to_string(v3));
+    bytestring result = this->before('%');
+    bytestring temp = this->after('%');
+
+    bytestring val = to_string(v1);
+    bytestring arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v2);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v3);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp;
+
     return result;
 }
 
 template <typename T1, typename T2>
 bytestring bytestring::format(const T1& v1, const T2& v2) const
 {
-    bytestring result = *this;
-    result = result.replace_once("%", to_string(v1));
-    result = result.replace_once("%", to_string(v2));
+    bytestring result = this->before('%');
+    bytestring temp = this->after('%');
+
+    bytestring val = to_string(v1);
+    bytestring arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp.before('%');
+    temp = temp.after('%');
+
+    val = to_string(v2);
+    arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
+        throw invalid_exception("invalid format argument");
+
+    result = result + val + temp;
+
     return result;
 }
 
@@ -222,27 +342,18 @@ bytestring bytestring::format(const T1& v1) const
     bytestring result = this->before('%');
     bytestring temp = this->after('%');
 
-    bytestring arg = temp.before('%');
-
     bytestring val = to_string(v1);
-    DEBUG("got val: %s\n", val.c_str());
-    if (arg.length() == 0)
-    {
-        result = result + val;
-    }
-    else if (arg.length() > 1)
-    {
-        bytestring c = arg.substring(0, 0);
-        uint length = arg.substring(1).parse_uint();
-        if (val.length() < length)
-        {
-            val = (c * (length - val.length())) + val;
-        }
-        result = result + val;
-    }
-    else
+    bytestring arg = temp.before('%');
+    temp = temp.after('%');
+    if (arg.length() > 1)
+        if (arg[-1] == '>')
+            val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+        else
+            val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+    else if (arg.length() > 0)
         throw invalid_exception("invalid format argument");
-    result = result + temp.after('%');
+
+    result = result + val + temp;
 
     return result;
 }

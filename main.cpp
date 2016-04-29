@@ -55,13 +55,13 @@ int main (int argc, char** argv)
     cout << bytestring("41424344").from_hex() << endl;
     cout << bytestring("31203220334sdf").from_hex() << endl;
 
-//    unsigned int val = -16666;
-//    cout << bytestring("hello %!").format(val) << endl;
-//    cout << bytestring("hello %, you have % %!").format(val, 15, bytestring("dollars")) << endl;
-//    cout << bytestring("hello %, you have % %: %").format(val, 15, bytestring("dollars"), bytestring("asdf+qwerty+123456") / "+") << endl;
-////    cout << bytestring("hello %!").format(tuple<bytestring>(bytestring("test"))) << endl;
-//    cout << bytestring("% %! % + %")
-//        .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
+    unsigned int val = -16666;
+    cout << bytestring("hello %%!").format(val) << endl;
+    cout << bytestring("hello %%, you have %% %%!").format(val, 15, bytestring("dollars")) << endl;
+    cout << bytestring("hello %%, you have %% %%: %%").format(val, 15, bytestring("dollars"), bytestring("asdf+qwerty+123456") / "+") << endl;
+//    cout << bytestring("hello %!").format(tuple<bytestring>(bytestring("test"))) << endl;
+    cout << bytestring("%% %%! %% + %%")
+        .format(tuple<bytestring, bytestring, int, list<bytestring>>(bytestring("hello"), bytestring("world"), -1337, bytestring("123456") / 3)) << endl;
 
 
     cout << bytestring("paSSwoRD1234 !@#$%^&*()").to_lowercase() << endl;
@@ -76,10 +76,6 @@ int main (int argc, char** argv)
     cout << "after empty: " << bytestring("asdf%%").after("%%") << endl;
 
 
-//    cout << bytestring("lol %04% there").format(15) << endl;
-//    cout << bytestring("% 10%|").format(bytestring("world")) << endl;
-
-
     cout << bytestring("asdf").leftpad('-', 8) << endl;
     cout << bytestring("asdf").leftpad('-', 3) << endl;
     cout << bytestring("asdf").leftpad("123", 8) << endl;
@@ -90,6 +86,15 @@ int main (int argc, char** argv)
     cout << bytestring("asdf").rightpad("123", 8) << endl;
     cout << bytestring("asdf").rightpad("123", 3) << endl;
 
+
+
+    cout << bytestring("hello %%!").format(bytestring("world")) << endl;
+    cout << bytestring("lol %04% there").format(15) << endl;
+    cout << bytestring("%_8% |").format(bytestring("world")) << endl;
+    cout << bytestring("%_8>% |").format(bytestring("world")) << endl;
+
+    cout << bytestring("FOXTROT%%ECHO%%ALPHA").format(bytestring("hello"), bytestring("world")) << endl;
+    cout << bytestring("%03%:% 6%").format(15, -500) << endl;
 
 
     return 0;
