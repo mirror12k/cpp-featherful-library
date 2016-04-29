@@ -105,9 +105,12 @@ public:
     list<K> map(list_mapper<T, K>&& mapper) const;
     template <class K>
     list<K> map(K* (*mapper_function)(const T&)) const;
+    template <class K>
+    list<K> map(K (*mapper_function)(const T&)) const;
     list<T>& map_inplace(list_mapper<T, T>& mapper);
     list<T>& map_inplace(list_mapper<T, T>&& mapper);
     list<T>& map_inplace(T* (*mapper_function)(const T&));
+    list<T>& map_inplace(T (*mapper_function)(const T&));
 
     list<T> filter(list_filterer<T>& filterer) const;
     list<T> filter(list_filterer<T>&& filterer) const;
@@ -713,6 +716,16 @@ list<K> list<T>::map(K* (*mapper_function)(const T&)) const
     return result;
 }
 
+template <class T>
+template <class K>
+list<K> list<T>::map(K (*mapper_function)(const T&)) const
+{
+    list<K> result;
+    for (iterator iter = this->begin(), iter_end = this->end(); iter != iter_end; ++iter)
+        result.push(mapper_function(*iter));
+    return result;
+}
+
 
 template <class T>
 list<T>& list<T>::map_inplace(list_mapper<T, T>& mapper)
@@ -745,6 +758,18 @@ list<T>& list<T>::map_inplace(T* (*mapper_function)(const T&))
         T* val = mapper_function(*link->p_item);
         delete link->p_item;
         link->p_item = val;
+    }
+    return *this;
+}
+
+template <class T>
+list<T>& list<T>::map_inplace(T (*mapper_function)(const T&))
+{
+    for (list_link* link = this->p_head_link->p_next, *link_end = this->p_tail_link; link != link_end; link = link->p_next)
+    {
+        T val = mapper_function(*link->p_item);
+        delete link->p_item;
+        link->p_item = new T(val);
     }
     return *this;
 }
