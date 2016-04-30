@@ -103,8 +103,13 @@ int main (int argc, char** argv)
 //    cout << featherful::to_string(mylist) << endl;
 
 
-
-    all_featherful_tests();
+//    cout << bytestring("asdf%qwerty%zxcv").before('%') << endl;
+//    cout << bytestring("asdf%qwerty%zxcv").before('%', 5) << endl;
+    cout << bytestring("asdf qwerty zxcv").match("asdf%6%zxcv") << endl;
+    cout << bytestring("asdf qwerty zxcv").match("asdf%15%zxcv") << endl;
+    cout << bytestring("asdf qwerty zxcv").match("asdf%%zxcx") << endl;
+    cout << bytestring("arg: 15").match("arg: %2%") << endl;
+//    all_featherful_tests();
 
 
     return 0;

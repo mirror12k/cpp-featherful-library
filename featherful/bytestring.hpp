@@ -120,6 +120,9 @@ public:
     template <typename T1>
     bytestring format(const T1& v1) const;
 
+    bool match(const bytestring& format) const;
+    list<bytestring> extract(const bytestring& format) const;
+
 
     bytestring to_lowercase() const;
     bytestring to_uppercase() const;

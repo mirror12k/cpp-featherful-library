@@ -3,12 +3,10 @@
 #include "exception.hpp"
 
 #include <cstring>
-#include <cstdlib>
-#include <cstdio>
 
-#include <exception>
-
-using std::exception;
+#include <iostream>
+using std::cout;
+using std::endl;
 
 
 namespace featherful
@@ -449,24 +447,24 @@ bytestring bytestring::splice(const bytestring& segment, int start, int end) con
 
 bytestring bytestring::before(char c, int offset) const
 {
-    offset = this->find(c, offset);
-    if (offset == -1)
-        return *this;
-    else if (offset == 0)
+    int end_offset = this->find(c, offset);
+    if (end_offset == -1)
+        return this->substring(offset);
+    else if (end_offset == offset)
         return bytestring();
     else
-        return this->substring(0, offset - 1);
+        return this->substring(offset, end_offset - 1);
 }
 
 bytestring bytestring::before(const bytestring& needle, int offset) const
 {
-    offset = this->find(needle, offset);
-    if (offset == -1)
-        return *this;
-    else if (offset == 0)
+    int end_offset = this->find(needle, offset);
+    if (end_offset == -1)
+        return this->substring(offset);
+    else if (end_offset == offset)
         return bytestring();
     else
-        return this->substring(0, offset - 1);
+        return this->substring(offset, end_offset - 1);
 }
 
 bytestring bytestring::after(char c, int offset) const
@@ -677,6 +675,77 @@ bool bytestring::empty() const
 
 
 
+bytestring bytestring::format(list<bytestring>& vals) const
+{
+    bytestring temp = *this;
+    bytestring result = temp.before('%');
+    temp = temp.after('%');
+    while (vals.length())
+    {
+        bytestring val = vals.shift();
+        bytestring arg = temp.before('%');
+        temp = temp.after('%');
+
+        if (arg.length() > 1)
+            if (arg[-1] == '>')
+                val = val.rightpad(arg[0], arg.substring(1).parse_uint());
+            else
+                val = val.leftpad(arg[0], arg.substring(1).parse_uint());
+        else if (arg.length() > 0)
+            throw invalid_exception("invalid format argument");
+
+        result = result + val + temp.before('%');
+        temp = temp.after('%');
+    }
+
+    return result;
+}
+
+
+bool bytestring::match(const bytestring& format) const
+{
+    int offset = 0;
+    int format_offset = 0;
+    while(format.contains('%', format_offset))
+    {
+        bytestring find_str = format.before('%', format_offset);
+//        cout << "find string: " << find_str << endl;
+        format_offset += find_str.length() + 1;
+        bytestring arg = format.before('%', format_offset);
+//        cout << "arg: " << arg << endl;
+        format_offset += arg.length() + 1;
+
+        int new_offset = this->find(find_str, offset);
+        if (new_offset == -1)
+            return false;
+        else
+            offset = new_offset + find_str.length();
+
+        if (! arg.empty())
+        {
+            offset += arg.parse_uint();
+            if (offset > this->i_length)
+                return false;
+        }
+    }
+    if (format_offset == format.length())
+        return true;
+    if (this->find(format.substring(format_offset), offset) == -1)
+        return false;
+    else
+        return true;
+}
+
+//list<bytestring> bytestring::extract(const bytestring& format) const
+//{
+//
+//}
+
+
+
+
+
+
 
 bytestring bytestring::to_lowercase() const
 {
@@ -822,33 +891,6 @@ bytestring bytestring::from_hex() const
 }
 
 
-
-
-bytestring bytestring::format(list<bytestring>& vals) const
-{
-    bytestring temp = *this;
-    bytestring result = temp.before('%');
-    temp = temp.after('%');
-    while (vals.length())
-    {
-        bytestring val = vals.shift();
-        bytestring arg = temp.before('%');
-        temp = temp.after('%');
-
-        if (arg.length() > 1)
-            if (arg[-1] == '>')
-                val = val.rightpad(arg[0], arg.substring(1).parse_uint());
-            else
-                val = val.leftpad(arg[0], arg.substring(1).parse_uint());
-        else if (arg.length() > 0)
-            throw invalid_exception("invalid format argument");
-
-        result = result + val + temp.before('%');
-        temp = temp.after('%');
-    }
-
-    return result;
-}
 
 
 std::ostream& operator<<(std::ostream& output, const bytestring& str)
