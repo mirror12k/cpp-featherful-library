@@ -109,6 +109,9 @@ int main (int argc, char** argv)
     cout << bytestring("asdf qwerty zxcv").match("asdf%15%zxcv") << endl;
     cout << bytestring("asdf qwerty zxcv").match("asdf%%zxcx") << endl;
     cout << bytestring("arg: 15").match("arg: %2%") << endl;
+
+
+    cout << to_string(bytestring("arg: 15").extract("a%2%: %2%")) << endl;
 //    all_featherful_tests();
 
 

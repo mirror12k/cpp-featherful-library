@@ -730,16 +730,50 @@ bool bytestring::match(const bytestring& format) const
     }
     if (format_offset == format.length())
         return true;
-    if (this->find(format.substring(format_offset), offset) == -1)
+    else if (this->find(format.substring(format_offset), offset) == -1)
         return false;
     else
         return true;
 }
 
-//list<bytestring> bytestring::extract(const bytestring& format) const
-//{
-//
-//}
+list<bytestring> bytestring::extract(const bytestring& format) const
+{
+    list<bytestring> result;
+
+    int offset = 0;
+    int format_offset = 0;
+    while(format.contains('%', format_offset))
+    {
+        bytestring find_str = format.before('%', format_offset);
+//        cout << "find string: " << find_str << endl;
+        format_offset += find_str.length() + 1;
+        bytestring arg = format.before('%', format_offset);
+//        cout << "arg: " << arg << endl;
+        format_offset += arg.length() + 1;
+
+        int new_offset = this->find(find_str, offset);
+        if (new_offset == -1)
+            return list<bytestring>();
+        else if (! arg.empty())
+        {
+            int length = arg.parse_uint();
+            offset = new_offset + find_str.length() + length;
+            if (offset > this->i_length)
+                return list<bytestring>();
+            result.push(this->substring(offset - length, offset - 1));
+        }
+        else
+        {
+            offset = new_offset + find_str.length();
+        }
+    }
+    if (format_offset == format.length())
+        return result;
+    else if (this->find(format.substring(format_offset), offset) == -1)
+        return list<bytestring>();
+    else
+        return result;
+}
 
 
 
