@@ -111,7 +111,12 @@ int main (int argc, char** argv)
     cout << bytestring("arg: 15").match("arg: %2%") << endl;
 
 
-    cout << to_string(bytestring("arg: 15").extract("a%2%: %2%")) << endl;
+    cout << to_string(bytestring("asdf qwerty zxcv").extract("a%%f %% %%cv")) << endl;
+    cout << to_string(bytestring("alpha").extract("lp%%")) << endl;
+    cout << to_string(bytestring("arg:0015").extract("%3%:%4%")) << endl;
+    cout << to_string(bytestring("arg:0015").extract("%%:%%")) << endl;
+    cout << to_string(bytestring("arg:0015:username/password").extract("%%:%%:%%/%%")) << endl;
+//    cout << to_string(bytestring("arg: 15").extract("a%2%: %2%")) << endl;
 //    all_featherful_tests();
 
 

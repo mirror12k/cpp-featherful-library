@@ -447,6 +447,8 @@ bytestring bytestring::splice(const bytestring& segment, int start, int end) con
 
 bytestring bytestring::before(char c, int offset) const
 {
+    if (offset == this->length())
+        return bytestring();
     int end_offset = this->find(c, offset);
     if (end_offset == -1)
         return this->substring(offset);
@@ -458,6 +460,8 @@ bytestring bytestring::before(char c, int offset) const
 
 bytestring bytestring::before(const bytestring& needle, int offset) const
 {
+    if (offset == this->length())
+        return bytestring();
     int end_offset = this->find(needle, offset);
     if (end_offset == -1)
         return this->substring(offset);
@@ -469,6 +473,8 @@ bytestring bytestring::before(const bytestring& needle, int offset) const
 
 bytestring bytestring::after(char c, int offset) const
 {
+    if (offset == this->length())
+        return bytestring();
     offset = this->find(c, offset);
     if (offset == -1)
         return *this;
@@ -480,6 +486,8 @@ bytestring bytestring::after(char c, int offset) const
 
 bytestring bytestring::after(const bytestring& needle, int offset) const
 {
+    if (offset == this->length())
+        return bytestring();
     offset = this->find(needle, offset);
     if (offset == -1)
         return *this;
@@ -740,39 +748,61 @@ list<bytestring> bytestring::extract(const bytestring& format) const
 {
     list<bytestring> result;
 
+
+    bytestring find_str = format.before('%');
+    int format_offset = 1;
     int offset = 0;
-    int format_offset = 0;
+
+    if (! find_str.empty())
+    {
+        format_offset = find_str.length() + 1;
+
+        offset = this->find(find_str);
+        if (offset == -1)
+            throw invalid_exception("invalid format arg");
+        offset += find_str.length();
+    }
+
     while(format.contains('%', format_offset))
     {
-        bytestring find_str = format.before('%', format_offset);
-//        cout << "find string: " << find_str << endl;
+        bytestring format_arg = format.before('%', format_offset);
+        format_offset += format_arg.length() + 1;
+        find_str = format.before('%', format_offset);
         format_offset += find_str.length() + 1;
-        bytestring arg = format.before('%', format_offset);
-//        cout << "arg: " << arg << endl;
-        format_offset += arg.length() + 1;
 
-        int new_offset = this->find(find_str, offset);
-        if (new_offset == -1)
-            return list<bytestring>();
-        else if (! arg.empty())
+        if (format_arg.empty())
         {
-            int length = arg.parse_uint();
-            offset = new_offset + find_str.length() + length;
-            if (offset > this->i_length)
-                return list<bytestring>();
-            result.push(this->substring(offset - length, offset - 1));
+            if (find_str.empty())
+                result.push(this->substring(offset));
+            else
+            {
+                int find_offset = this->find(find_str, offset);
+                if (find_offset == -1)
+                    throw invalid_exception("failed to find str");
+
+                result.push(this->substring(offset, find_offset - 1));
+                offset = find_offset + find_str.length();
+            }
         }
         else
         {
-            offset = new_offset + find_str.length();
+            uint length = format_arg.parse_uint();
+            if (find_str.empty())
+            {
+                result.push(this->substring(offset, offset + length - 1));
+            }
+            else
+            {
+                int find_offset = this->find(find_str, offset);
+                if (find_offset == -1)
+                    throw invalid_exception("failed to find str");
+                result.push(this->substring(offset, offset + length - 1));
+                offset = find_offset + find_str.length();
+            }
         }
     }
-    if (format_offset == format.length())
-        return result;
-    else if (this->find(format.substring(format_offset), offset) == -1)
-        return list<bytestring>();
-    else
-        return result;
+
+    return result;
 }
 
 
