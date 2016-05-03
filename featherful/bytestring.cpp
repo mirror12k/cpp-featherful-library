@@ -723,7 +723,7 @@ bool bytestring::match(const bytestring& format) const
 //        cout << "arg: " << arg << endl;
         format_offset += arg.length() + 1;
 
-        int new_offset = this->find(find_str, offset);
+        int new_offset = find_str.empty() ? offset : this->find(find_str, offset);
         if (new_offset == -1)
             return false;
         else
