@@ -125,6 +125,27 @@ int main (int argc, char** argv)
 //    cout << to_string(bytestring("arg: 15").extract("a%2%: %2%")) << endl;
 //    all_featherful_tests();
 
+    list<bytestring> strings;
+    strings.push("asdf");
+    strings.push("qwerty");
+    strings.push("zxcv");
+    cout << to_string(bytestring("asdf qwerty zxcv").split(' ')) << endl;
+    cout << (strings == bytestring("asdf qwerty zxcv").split(' ')) << endl;
+    cout << (strings == bytestring("asdf qwerty zcv").split(' ')) << endl;
+    cout << (strings == bytestring("asdf qwerty zxcv qwerty").split(' ')) << endl;
+    strings.push("qwerty");
+    cout << (strings == bytestring("asdf qwerty zxcv qwerty").split(' ')) << endl;
+
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("asdf") << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("qwerty") << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("qwerty", 2) << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("qwerty", -4) << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("qwerty", -2) << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("qwerty", 4) << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("zxcv") << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("magic") << endl;
+    cout << bytestring("asdf qwerty zxcv qwerty").split(' ').find("asdf+") << endl;
+
 
     return 0;
 }

@@ -63,6 +63,9 @@ public:
     list<T>& operator+=(list<T>& other);
     list<T>& operator+=(list<T>&& other);
 
+    bool operator==(const list<T>& other) const;
+    bool operator!=(const list<T>& other) const;
+
     void init_empty();
     void destroy();
     void pilfer_links(list_link* start, list_link* end, uint* length);
@@ -139,6 +142,9 @@ public:
     bool notall(list_filterer<T>&& filterer) const;
     bool notall(bool (*filter_function)(const T&)) const;
 
+
+    bool equal(const list<T>& other) const;
+    int find(const T& needle, int offset=0) const;
 
     class list_link
     {
@@ -341,6 +347,19 @@ list<T>& list<T>::operator+=(list<T>&& other)
     this->concat(other);
     return *this;
 }
+
+template <class T>
+bool list<T>::operator==(const list<T>& other) const
+{
+    return this->equal(other);
+}
+
+template <class T>
+bool list<T>::operator!=(const list<T>& other) const
+{
+    return ! this->equal(other);
+}
+
 
 
 template <class T>
@@ -990,6 +1009,34 @@ bool list<T>::notall(bool (*filter_function)(const T&)) const
 
 
 
+template <class T>
+bool list<T>::equal(const list<T>& other) const
+{
+    if (other.length() != this->i_length)
+        return false;
+
+    for (iterator iter = this->begin(), iter_end = this->end(), other_iter = other.begin(); iter != iter_end; iter++, other_iter++)
+        if (*iter != *other_iter)
+            return false;
+    return true;
+}
+
+template <class T>
+int list<T>::find(const T& needle, int offset) const
+{
+    if (offset < 0)
+    {
+        offset += this->i_length;
+        if (offset < 0)
+            throw range_exception("negative list index out of bounds in list::find", offset);
+    }
+
+    int index = offset;
+    for (iterator iter = this->begin() + offset, iter_end = this->end(); iter != iter_end; iter++, index++)
+        if (*iter == needle)
+            return index;
+    return -1;
+}
 
 
 
